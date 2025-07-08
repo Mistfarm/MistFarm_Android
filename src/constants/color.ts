@@ -1,7 +1,7 @@
 export const colorTable = {
   normal: {
-    white: '#141414',
-    black: '#FFFFFF',
+    white: '#FFFFFF',
+    black: '#141414',
   },
   error: '#FF7474',
   warning: '#FFDD54',
@@ -28,5 +28,6 @@ export const colorTable = {
     700: '#CACACA',
     800: '#DEDEDE',
     900: '#F3F3F3',
+    950: '#262626',
   },
 };
