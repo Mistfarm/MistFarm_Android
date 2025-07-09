@@ -1,3 +1,5 @@
+import { isSearchBarAvailableForCurrentPlatform } from 'react-native-screens';
+
 export const fontTable = {
   heading: {
     1: {
@@ -36,6 +38,10 @@ export const fontTable = {
       fontSize: 14,
       fontFamily: 'Pretendard-Regular',
       lineHeight: 14,
+    },
+    3: {
+      fontSize: 12,
+      fontFamily: 'Pretendard-SemiBold',
     },
   },
 };
