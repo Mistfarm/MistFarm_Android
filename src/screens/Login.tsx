@@ -11,8 +11,14 @@ import Input from '../components/common/Input';
 import { Button } from '../components/common/Button';
 import Logo from '../assets/Logo.svg';
 import { colorTable } from '../constants/color';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/Stack';
 
-const Login = () => {
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+
+function Login() {
+  const navigation = useNavigation<NavigationProp>();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
@@ -56,6 +62,7 @@ const Login = () => {
               fontLevel={1}
               colorType="gray"
               colorLevel={600}
+              onPress={() => navigation.navigate('Email')}
             >
               회원가입
             </Text>
@@ -68,7 +75,7 @@ const Login = () => {
       </View>
     </KeyboardAvoidingView>
   );
-};
+}
 
 export default Login;
 

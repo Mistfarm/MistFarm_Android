@@ -5,23 +5,22 @@ import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import Login from './src/screens/Login';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
+import Email from './src/screens/register/Email';
 
 enableScreens();
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator
           initialRouteName="Login"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Email" component={Email} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
