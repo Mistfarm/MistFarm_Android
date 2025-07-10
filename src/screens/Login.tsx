@@ -17,7 +17,7 @@ import { RootStackParamList } from '../types/Stack';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
-function Login() {
+export function Login() {
   const navigation = useNavigation<NavigationProp>();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -76,8 +76,6 @@ function Login() {
     </KeyboardAvoidingView>
   );
 }
-
-export default Login;
 
 const styles = StyleSheet.create({
   container: {

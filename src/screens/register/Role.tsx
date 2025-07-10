@@ -11,7 +11,7 @@ import { RootStackParamList } from '../../types/Stack';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Role'>;
 
-function Role() {
+export function Role() {
   const navigation = useNavigation<NavigationProp>();
   const [selectedRole, setSelectedRole] = useState<'house' | 'farm' | null>(
     null,
@@ -84,8 +84,6 @@ function Role() {
   );
 }
 
-export default Role;
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginLeft: 'auto',
     marginRight: 'auto',
-    width: 362,
+    width: '90%',
   },
   inputWrapper: {
     gap: 32,
