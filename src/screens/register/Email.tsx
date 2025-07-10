@@ -11,30 +11,35 @@ import { Text } from '../../components/common/Text';
 import Input from '../../components/common/Input';
 import { useState } from 'react';
 import { Button } from '../../components/common/Button';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/Stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type EmailScreenRouteProp = RouteProp<RootStackParamList, 'Email'>;
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Email'>;
 
-function Email() {
+export function Email() {
   const route = useRoute<EmailScreenRouteProp>();
+  const navigation = useNavigation<NavigationProp>();
   const role = route.params?.role;
   const [email, setEmail] = useState<string>('');
   const [check, setCheck] = useState<string>('');
 
-  const onPress = () => {
+  const onEmail = () => {
     if (email) console.log('이메일 발송됨');
   };
 
-  const onEmail = () => {
+  const onPress = () => {
     if (!check) return;
 
     if (role === 'house') {
       console.log('가정용 회원가입 API 호출');
       // 가정용 이메일 요청
+      navigation.navigate('Password', { role: role });
     } else if (role === 'farm') {
       console.log('농업용 회원가입 API 호출');
       // 농업용 이메일 요청
+      navigation.navigate('Password', { role: role });
     }
   };
 
@@ -69,7 +74,7 @@ function Email() {
                   onTextChange={setCheck}
                 />
               </View>
-              <TouchableOpacity style={styles.checkButton} onPress={onPress}>
+              <TouchableOpacity style={styles.checkButton} onPress={onEmail}>
                 <Text
                   fontType="body"
                   fontLevel={3}
@@ -82,7 +87,7 @@ function Email() {
             </View>
           </View>
           <View style={styles.buttonWrapper}>
-            <Button onPress={onEmail} type="gray" disabled={!check}>
+            <Button onPress={onPress} type="gray" disabled={!check || !email}>
               다음
             </Button>
           </View>
@@ -91,8 +96,6 @@ function Email() {
     </KeyboardAvoidingView>
   );
 }
-
-export default Email;
 
 const styles = StyleSheet.create({
   container: {
@@ -106,7 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginLeft: 'auto',
     marginRight: 'auto',
-    width: 362,
+    width: '90%',
   },
   inputWrapper: { gap: 32 },
   check: {
