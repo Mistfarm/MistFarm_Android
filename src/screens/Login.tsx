@@ -62,7 +62,7 @@ function Login() {
               fontLevel={1}
               colorType="gray"
               colorLevel={600}
-              onPress={() => navigation.navigate('Email')}
+              onPress={() => navigation.navigate('Role')}
             >
               회원가입
             </Text>

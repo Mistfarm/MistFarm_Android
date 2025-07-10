@@ -1,4 +1,5 @@
 export type RootStackParamList = {
   Login: undefined;
-  Email: undefined;
+  Role: undefined;
+  Email: { role: 'house' | 'farm' };
 };
