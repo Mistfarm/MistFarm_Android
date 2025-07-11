@@ -3,4 +3,7 @@ export type RootStackParamList = {
   Role: undefined;
   Email: { role: 'house' | 'farm' };
   Password: { role: 'house' | 'farm' };
+  HouseDevice: undefined;
+  HouseSection: undefined;
+  Game: undefined;
 };

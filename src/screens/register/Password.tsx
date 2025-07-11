@@ -10,14 +10,26 @@ import { colorTable } from '../../constants/color';
 import { Text } from '../../components/common/Text';
 import Input from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
-import { Icon } from '../../components/common/Icon'; // 아이콘 불러오기
+import { Icon } from '../../components/common/Icon';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types/Stack';
+
+type EmailScreenRouteProp = RouteProp<RootStackParamList, 'Password'>;
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Password'>;
 
 export function Password() {
   const [password, setPassword] = useState<string>('');
   const [check, setCheck] = useState<string>('');
   const [agree, setAgree] = useState<boolean>(false);
+  const route = useRoute<EmailScreenRouteProp>();
+  const role = route.params?.role;
+  const navigation = useNavigation<NavigationProp>();
 
   const handleSignup = () => {
+    if (role == 'house') {
+      navigation.navigate('HouseDevice');
+    }
     console.log('회원가입 시도 :', password);
   };
 
