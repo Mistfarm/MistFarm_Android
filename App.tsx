@@ -1,41 +1,20 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { enableScreens } from 'react-native-screens';
-import {
-  Login,
-  Email,
-  Role,
-  Password,
-  Game,
-  HouseDevice,
-  HouseSection,
-} from './src/screens/index';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
 
-enableScreens();
-
-const Stack = createNativeStackNavigator();
-
-function App() {
+export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Role" component={Role} />
-          <Stack.Screen name="Email" component={Email} />
-          <Stack.Screen name="Password" component={Password} />
-          <Stack.Screen name="HouseDevice" component={HouseDevice} />
-          <Stack.Screen name="HouseSection" component={HouseSection} />
-          <Stack.Screen name="Game" component={Game} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <View style={styles.container}>
+      <Text>Open up App.tsx to start working on your app!</Text>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

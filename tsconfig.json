@@ -1,6 +1,6 @@
 {
-  "extends": "@react-native/typescript-config",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "strict": true
   }
 }
