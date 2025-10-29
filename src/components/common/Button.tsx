@@ -31,7 +31,7 @@ const colorSetting = {
     },
 }
 
-function Button({ onClick, children, type = "main" }: IProps) {
+export function Button({ onClick, children, type = "main" }: IProps) {
     const animatedValue = useRef(new Animated.Value(0)).current
 
     const handlePressIn = () => {
@@ -70,16 +70,18 @@ function Button({ onClick, children, type = "main" }: IProps) {
     )
 }
 
-export default Button
-
 const styles = StyleSheet.create({
     button: {
         width: "100%",
-        padding: 10,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
         borderRadius: 6,
+        marginVertical: 8,
     },
     text: {
         textAlign: "center",
         fontWeight: "600",
+        fontSize: 15,
     },
 })
