@@ -1,38 +1,22 @@
-import { StatusBar } from "expo-status-bar"
-import { StyleSheet, Text, View } from "react-native"
-import { useState } from "react"
-import Input from "./src/components/common/Input"
-import Button from "./src/components/common/Button"
+import React from "react"
+import { NavigationContainer } from "@react-navigation/native"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { Login, Signup } from "./src/screens/index"
+
+const Stack = createNativeStackNavigator()
 
 export default function App() {
-    const [password, setPassword] = useState<string>("")
-
     return (
-        <View style={styles.container}>
-            <Text>Op!</Text>
-
-            <Input
-                label="비밀번호"
-                placeholder="비밀번호를 입력하세요"
-                value={password}
-                onChange={setPassword}
-                password
-            />
-
-            <Button>main</Button>
-            <Button type="gray">gray</Button>
-            <Button type="error">error</Button>
-
-            <StatusBar style="auto" />
-        </View>
+        <NavigationContainer>
+            <Stack.Navigator
+                screenOptions={{
+                    contentStyle: { backgroundColor: "white" },
+                    headerShown: false,
+                }}
+            >
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Signup" component={Signup} />
+            </Stack.Navigator>
+        </NavigationContainer>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-})

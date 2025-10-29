@@ -12,21 +12,21 @@ import { colors } from "../../styles/colors"
 interface IProps {
     label?: string
     placeholder?: string
-    type?: string
+    type?: "text" | "number" | "password"
     value?: string
     onChange?: (text: string) => void
-    password?: boolean
 }
 
-export default function Input({
+export function Input({
     label,
     placeholder,
-    type,
+    type = "text",
     value,
     onChange,
-    password = false,
 }: IProps) {
     const [showPassword, setShowPassword] = useState(false)
+
+    const isPassword = type === "password"
 
     return (
         <View style={styles.container}>
@@ -38,12 +38,12 @@ export default function Input({
                     placeholder={placeholder}
                     value={value}
                     onChangeText={onChange}
-                    secureTextEntry={password && !showPassword}
+                    secureTextEntry={isPassword && !showPassword}
                     keyboardType={type === "number" ? "numeric" : "default"}
                     placeholderTextColor={colors.gray[500]}
                 />
 
-                {password && (
+                {isPassword && (
                     <TouchableOpacity
                         style={styles.icon}
                         onPress={() => setShowPassword((prev) => !prev)}
