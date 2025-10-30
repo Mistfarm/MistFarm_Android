@@ -8,6 +8,7 @@ import {
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { colors } from "../../styles/colors"
+import responsive from "../../utils/responsive"
 
 interface IProps {
     label?: string
@@ -66,31 +67,31 @@ export function Input({
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        marginVertical: 8,
+        marginVertical: responsive(8),
     },
     label: {
-        fontSize: 14,
+        fontSize: responsive(14),
         fontWeight: "600",
-        marginBottom: 6,
+        marginBottom: responsive(6),
         color: colors.black,
     },
     inputWrapper: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: colors.gray[50],
-        borderRadius: 6,
-        borderWidth: 1,
+        borderRadius: responsive(6),
+        borderWidth: responsive(1),
         borderColor: colors.gray[100],
-        paddingHorizontal: 12,
+        paddingHorizontal: responsive(12),
     },
     input: {
         flex: 1,
-        height: 48,
-        fontSize: 15,
-        lineHeight: 20,
+        height: responsive(48),
+        fontSize: responsive(15),
+        lineHeight: responsive(20),
         color: colors.black,
     },
     icon: {
-        padding: 4,
+        padding: responsive(4),
     },
 })

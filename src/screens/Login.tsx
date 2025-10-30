@@ -20,7 +20,7 @@ export function Login() {
 
     const LoginHandler = () => {
         // 로그인 로직
-        navigation.navigate("Login")
+        navigation.navigate("Device")
     }
 
     const toSignupHandler = () => {
@@ -54,7 +54,7 @@ export function Login() {
                     <Text style={styles.signup} onPress={toSignupHandler}>
                         회원가입
                     </Text>
-                    <Button>로그인</Button>
+                    <Button onClick={LoginHandler}>로그인</Button>
                 </View>
             </View>
         </>
