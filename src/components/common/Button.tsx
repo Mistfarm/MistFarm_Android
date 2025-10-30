@@ -6,6 +6,7 @@ import {
     TouchableWithoutFeedback,
 } from "react-native"
 import { colors } from "../../styles/colors"
+import responsive from "../../utils/responsive"
 
 interface IProps {
     onClick?: () => void
@@ -73,15 +74,15 @@ export function Button({ onClick, children, type = "main" }: IProps) {
 const styles = StyleSheet.create({
     button: {
         width: "100%",
-        height: 50,
+        height: responsive(50),
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 6,
-        marginVertical: 8,
+        borderRadius: responsive(6),
+        marginVertical: responsive(8),
     },
     text: {
         textAlign: "center",
         fontWeight: "600",
-        fontSize: 15,
+        fontSize: responsive(15),
     },
 })
