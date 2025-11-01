@@ -4,4 +4,5 @@ export type RootStackParamList = {
     Device: undefined
     Area: undefined
     Mypage: undefined
+    Alarm: undefined
 }
