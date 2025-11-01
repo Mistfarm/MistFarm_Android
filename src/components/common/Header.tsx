@@ -7,7 +7,6 @@ import {
     Animated,
     Dimensions,
 } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import { useNavigation } from "@react-navigation/native"
@@ -90,6 +89,10 @@ export function Header({ title }: IProps) {
                         <TouchableOpacity
                             style={styles.bell}
                             activeOpacity={0.7}
+                            onPress={() => {
+                                toggleSidebar()
+                                navigation.navigate("Alarm")
+                            }}
                         >
                             <AntDesign
                                 name="bell"
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     },
     header: {
         width: "100%",
-        height: responsive(40),
+        height: responsive(50),
         borderBottomWidth: 1,
         borderColor: colors.gray[50],
         justifyContent: "center",
@@ -183,5 +186,6 @@ const styles = StyleSheet.create({
     logout: {
         marginTop: "auto",
         marginLeft: "auto",
+        marginBottom: responsive(20),
     },
 })
