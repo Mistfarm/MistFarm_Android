@@ -1,27 +1,26 @@
 {
     "cli": {
-        "version": ">= 5.2.0"
+        "version": ">= 3.0.0",
+        "appVersionSource": "remote"
     },
     "build": {
-        "development": {
+        "preview": {
             "developmentClient": true,
             "distribution": "internal",
             "android": {
-                "gradleCommand": ":app:assembleDebug"
-            },
-            "ios": {
-                "simulator": true
-            }
-        },
-        "preview": {
-            "distribution": "internal",
-            "android": {
                 "buildType": "apk"
+            },
+            "env": {
+                "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "AIzaSyB04sRZrlceUZqW1gyYNP3DXnjcjl1Y4do"
             }
         },
         "production": {
+            "autoIncrement": true,
             "android": {
                 "buildType": "app-bundle"
+            },
+            "env": {
+                "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "AIzaSyB04sRZrlceUZqW1gyYNP3DXnjcjl1Y4do"
             }
         }
     },
