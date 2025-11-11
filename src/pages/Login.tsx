@@ -3,6 +3,7 @@ import { Input, Button, Text } from "../components/common"
 import { useForm } from "../hooks/useForm"
 
 export function Login() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { form, setForm, handleChange } = useForm<{
         user_id: string
         password: string
