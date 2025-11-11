@@ -1,6 +1,6 @@
 import "./styles/global.css"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { Login, Register, Start } from "./pages"
+import { Login, Mypage, Register, Start } from "./pages"
 import { Header } from "./components/common"
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
                     <Route path="/" element={<Start />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/mypage" element={<Mypage />} />
                 </Routes>
             </BrowserRouter>
         </>
