@@ -108,8 +108,6 @@ export function Header() {
     )
 }
 
-/* ------------------ styled-components ------------------ */
-
 const Container = styled.header`
     position: fixed;
     top: 0;
@@ -123,7 +121,7 @@ const Container = styled.header`
 const Wrapper = styled.div`
     max-width: 1200px;
     margin: 0 auto;
-    height: 60px;
+    height: 66px;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
