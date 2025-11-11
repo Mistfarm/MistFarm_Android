@@ -1,4 +1,6 @@
-export const Fonts: { [key in any]: React.CSSProperties } = {
+import { CSSProperties } from "react"
+
+export const Fonts = {
     LabelSmall: {
         fontSize: "14px",
         fontWeight: 500,
@@ -61,3 +63,4 @@ export const Fonts: { [key in any]: React.CSSProperties } = {
 } as const
 
 export type fontsKeyOfType = keyof typeof Fonts
+export type FontStyle = Record<fontsKeyOfType, CSSProperties>

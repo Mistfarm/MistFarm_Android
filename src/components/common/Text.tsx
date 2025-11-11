@@ -15,7 +15,10 @@ export const Text = ({
     ...props
 }: Props) => {
     return (
-        <span style={{ ...Fonts[font], color: colors[color], ...style }}>
+        <span
+            style={{ ...Fonts[font], color: colors[color], ...style }}
+            {...props}
+        >
             {children}
         </span>
     )
