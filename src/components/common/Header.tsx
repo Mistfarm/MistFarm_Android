@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react"
 import { colors } from "../../styles/colors"
 
 export function Header() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isLogined, setIsLogined] = useState<boolean>(false)
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate()
