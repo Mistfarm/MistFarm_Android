@@ -1,62 +1,113 @@
 import styled from "styled-components"
 import Logo from "../../assets/Logo.png"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { Menu, X } from "lucide-react"
+import { colors } from "../../styles/colors"
 
 export function Header() {
     const [isLogined, setIsLogined] = useState<boolean>(false)
+    const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate()
 
-    const logoutHandler = async () => {
-        // 로그아웃 핸들러
-        navigate("/")
+    const toggleMenu = () => setMenuOpen((prev) => !prev)
+
+    const handleNavClick = (path: string) => {
+        navigate(path)
+        setMenuOpen(false)
     }
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) setMenuOpen(false)
+        }
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
+
     return (
-        <>
-            {isLogined ? (
-                <Container>
-                    <Wrapper>
-                        <Left>
+        <Container>
+            <Wrapper>
+                <LogoButton onClick={() => navigate("/")}>
+                    <img src={Logo} alt="로고" />
+                </LogoButton>
+
+                <NavCenter>
+                    {isLogined && (
+                        <>
                             <NavButton onClick={() => navigate("/device")}>
                                 기기관리
                             </NavButton>
-                            <NavButton onClick={() => navigate("/plant")}>
-                                식물관리
+                            <NavButton onClick={() => navigate("/area")}>
+                                구획관리
                             </NavButton>
-                        </Left>
-                        <Right>
-                            <NavButton onClick={logoutHandler}>
-                                로그아웃
+                        </>
+                    )}
+                </NavCenter>
+
+                <RightSection>
+                    <DesktopButtons>
+                        {isLogined ? (
+                            <NavButton onClick={() => navigate("/mypage")}>
+                                마이페이지
                             </NavButton>
-                            <LogoButton>
-                                <img src={Logo} alt="로고" />
-                            </LogoButton>
-                        </Right>
-                    </Wrapper>
-                </Container>
-            ) : (
-                <Container>
-                    <Wrapper>
-                        <Left>
-                            <LogoButton>
-                                <img src={Logo} alt="로고" />
-                            </LogoButton>
-                        </Left>
-                        <Right>
-                            <NavButton onClick={() => navigate("/register")}>
+                        ) : (
+                            <>
+                                <NavButton
+                                    onClick={() => navigate("/register")}
+                                >
+                                    회원가입
+                                </NavButton>
+                                <LoginButton onClick={() => navigate("/login")}>
+                                    로그인
+                                </LoginButton>
+                            </>
+                        )}
+                    </DesktopButtons>
+
+                    <MenuButton onClick={toggleMenu}>
+                        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </MenuButton>
+                </RightSection>
+            </Wrapper>
+
+            {menuOpen && (
+                <MobileMenu>
+                    {isLogined ? (
+                        <>
+                            <NavButton
+                                onClick={() => handleNavClick("/device")}
+                            >
+                                기기관리
+                            </NavButton>
+                            <NavButton onClick={() => handleNavClick("/plant")}>
+                                구획관리
+                            </NavButton>
+                            <NavButton
+                                onClick={() => handleNavClick("/mypage")}
+                            >
+                                마이페이지
+                            </NavButton>
+                        </>
+                    ) : (
+                        <>
+                            <NavButton
+                                onClick={() => handleNavClick("/register")}
+                            >
                                 회원가입
                             </NavButton>
-                            <LoginButton onClick={() => navigate("/login")}>
+                            <NavButton onClick={() => handleNavClick("/login")}>
                                 로그인
-                            </LoginButton>
-                        </Right>
-                    </Wrapper>
-                </Container>
+                            </NavButton>
+                        </>
+                    )}
+                </MobileMenu>
             )}
-        </>
+        </Container>
     )
 }
+
+/* ------------------ styled-components ------------------ */
 
 const Container = styled.header`
     position: fixed;
@@ -64,68 +115,25 @@ const Container = styled.header`
     left: 0;
     width: 100%;
     background: white;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #eee;
     z-index: 1000;
-    overflow-x: hidden;
 `
 
 const Wrapper = styled.div`
     max-width: 1200px;
     margin: 0 auto;
     height: 60px;
-    width: 100%;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-sizing: border-box;
-
-    @media (max-width: 768px) {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 8px 12px;
-        gap: 8px;
-    }
-`
-
-const Left = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
-
-    @media (max-width: 500px) {
-        gap: 12px;
-    }
-`
-
-const Right = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 24px;
-`
-
-const NavButton = styled.button`
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: #333;
-    white-space: nowrap;
-
-    &:hover {
-        color: #1860f0;
-    }
-
-    @media (max-width: 500px) {
-        font-size: 14px;
-    }
+    position: relative;
 `
 
 const LogoButton = styled.button`
     background: none;
     border: none;
-    padding: 0;
+    cursor: pointer;
 
     img {
         width: 80px;
@@ -137,8 +145,54 @@ const LogoButton = styled.button`
     }
 `
 
+const NavCenter = styled.nav`
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+`
+
+const RightSection = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 16px;
+`
+
+/* ✅ 데스크탑 전용 버튼 */
+const DesktopButtons = styled.div`
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+`
+
+const NavButton = styled.button`
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        color: ${colors.Green500};
+    }
+
+    @media (max-width: 500px) {
+        font-size: 14px;
+    }
+`
+
 const LoginButton = styled.button`
-    background: #1860f0;
+    background: ${colors.Green500};
     color: white;
     border: none;
     padding: 7px 12px;
@@ -153,5 +207,43 @@ const LoginButton = styled.button`
     @media (max-width: 500px) {
         font-size: 14px;
         padding: 6px 10px;
+    }
+`
+
+/* ✅ 모바일 전용 메뉴 버튼 */
+const MenuButton = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+
+    @media (max-width: 768px) {
+        display: block;
+    }
+`
+
+/* ✅ 모바일 드롭다운 메뉴 */
+const MobileMenu = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border-top: 1px solid #eee;
+    padding: 12px 0;
+    animation: fadeIn 0.3s ease;
+
+    ${NavButton}, ${LoginButton} {
+        margin: 8px 0;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 `
