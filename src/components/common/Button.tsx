@@ -15,7 +15,7 @@ export const Button = ({
     kind = "blue",
     size = "medium",
     style,
-    full,
+    full = true,
     children,
     ...props
 }: Props) => {
