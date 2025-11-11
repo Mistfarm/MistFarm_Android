@@ -2,7 +2,7 @@ import { ComponentProps, useState } from "react"
 import styled from "styled-components"
 import { Text } from "./Text"
 import { colors } from "../../styles/colors"
-import { HiEye, HiEyeOff } from "react-icons/hi"
+import { Eye, EyeOff } from "lucide-react"
 
 type Props = ComponentProps<"input"> & {
     label?: string
@@ -39,7 +39,7 @@ export const Input = ({ label, type = "text", style, ...props }: Props) => {
                             }}
                             onClick={() => setPassShow(false)}
                         >
-                            <HiEye
+                            <Eye
                                 style={{
                                     display: "flex",
                                     justifyContent: "center",
@@ -57,7 +57,7 @@ export const Input = ({ label, type = "text", style, ...props }: Props) => {
                             }}
                             onClick={() => setPassShow(true)}
                         >
-                            <HiEyeOff
+                            <EyeOff
                                 style={{
                                     display: "flex",
                                     justifyContent: "center",
