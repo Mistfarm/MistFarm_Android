@@ -19,7 +19,7 @@ export const Button = ({
     children,
     ...props
 }: Props) => {
-    const KIND_STYLE: { [key in KindType]: CSSProperties } = {
+    const KIND_STYLE: Record<KindType, CSSProperties> = {
         blue: {
             backgroundColor: colors.Green500,
             color: colors.White,
@@ -38,9 +38,9 @@ export const Button = ({
         },
     }
 
-    const SIZE_STYLE: { [key in "medium" | "large"]: any } = {
-        medium: { padding: "8px 16px", ...Fonts["LabelMedium"] },
-        large: { padding: "16px 24px", ...Fonts["LabelLarge"] },
+    const SIZE_STYLE: Record<"medium" | "large", CSSProperties> = {
+        medium: { padding: "8px 16px", ...Fonts.LabelMedium },
+        large: { padding: "16px 24px", ...Fonts.LabelLarge },
     }
 
     return (
