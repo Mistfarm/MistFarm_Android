@@ -103,6 +103,7 @@ const InputLabel = styled.label`
     }
 `
 const InputFrame = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
