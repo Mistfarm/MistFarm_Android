@@ -90,34 +90,44 @@ export function Mypage() {
 
 const Container = styled.div`
     width: 100%;
-    padding: 66px 16px 0;
+    padding: 100px 0;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        padding: 80px 32px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 80px 20px;
+    }
 `
 
 const Wrapper = styled.div`
-    margin-top: 72px;
-    width: 760px;
+    width: 100%;
+    max-width: 760px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 60px;
+    padding: 100px 0;
+    box-sizing: border-box;
 
     @media (max-width: 1024px) {
-        width: 90%;
         gap: 48px;
+        padding: 80px 32px;
     }
 
     @media (max-width: 768px) {
-        width: 100%;
         gap: 36px;
+        padding: 80px 20px;
     }
 
     @media (max-width: 480px) {
-        margin-top: 40px;
+        padding: 60px 16px;
         gap: 28px;
     }
 `
