@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { AreaItem } from "../components/area/AreaItem"
+import { AreaItem } from "../components/setting"
 import { Settings } from "lucide-react"
 import { colors } from "../styles/colors"
 
