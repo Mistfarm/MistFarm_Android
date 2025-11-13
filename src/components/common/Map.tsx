@@ -18,8 +18,6 @@ export function Map({ lat, lng, level = 3, height = "500px" }: IProps) {
     const mapRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        console.log(process.env.REACT_APP_KAKAO_MAP_KEY)
-
         const mapScriptId = "kakao-map-script"
 
         if (window.kakao && window.kakao.maps) {
