@@ -1,6 +1,6 @@
 import "./styles/global.css"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { Login, Mypage, Register, Select, Setting, Start } from "./pages"
+import { Login, Mypage, Plant, Register, Plants, Setting, Start } from "./pages"
 import { Header } from "./components/common"
 
 function App() {
@@ -14,8 +14,10 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/mypage" element={<Mypage />} />
-                    <Route path="/select" element={<Select />} />
+                    <Route path="/plants" element={<Plants />} />
                     <Route path="/setting" element={<Setting />} />
+                    {/* <Route path="/plants/:id" element={<Plant />} /> */}
+                    <Route path="/detail" element={<Plant />} />
                 </Routes>
             </BrowserRouter>
         </>

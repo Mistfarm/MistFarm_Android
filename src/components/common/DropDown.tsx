@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react"
 import styled, { keyframes, css } from "styled-components"
-import { createPortal } from "react-dom"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { colors } from "../../styles/colors"
 import { Text } from "../common"
@@ -21,49 +20,19 @@ export function Dropdown({
     placeholder = "선택해주세요",
 }: Props) {
     const [open, setOpen] = useState(false)
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-        width: 0,
-        openUp: false,
-    })
+    const [openUp, setOpenUp] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
-
-    const listIdRef = useRef(
-        `dropdown-list-${Math.random().toString(36).slice(2, 9)}`
-    )
-
-    const updatePosition = () => {
-        if (!ref.current) return
-        const rect = ref.current.getBoundingClientRect()
-        const dropdownHeight = Math.min(options.length * 48, 240)
-        const spaceBelow = window.innerHeight - rect.bottom
-        const shouldOpenUp = spaceBelow < dropdownHeight + 8
-
-        setPosition({
-            top: shouldOpenUp
-                ? rect.top + window.scrollY - dropdownHeight - 8
-                : rect.bottom + window.scrollY + 4,
-            left: rect.left + window.scrollX,
-            width: rect.width,
-            openUp: shouldOpenUp,
-        })
-    }
-
-    useEffect(() => {
-        if (open) updatePosition()
-    }, [open, options.length])
 
     useEffect(() => {
         if (!open) return
-        const handleResize = () => updatePosition()
-        window.addEventListener("resize", handleResize)
-        window.addEventListener("orientationchange", handleResize)
-        return () => {
-            window.removeEventListener("resize", handleResize)
-            window.removeEventListener("orientationchange", handleResize)
+
+        const rect = ref.current?.getBoundingClientRect()
+        if (rect) {
+            const dropdownHeight = Math.min(options.length * 48, 240)
+            const spaceBelow = window.innerHeight - rect.bottom
+            setOpenUp(spaceBelow < dropdownHeight + 8)
         }
-    }, [open])
+    }, [open, options.length])
 
     useEffect(() => {
         if (!open) return
@@ -82,59 +51,44 @@ export function Dropdown({
         setOpen(false)
     }
 
-    const DropdownContent = (
-        <DropdownList
-            id={listIdRef.current}
-            role="listbox"
-            aria-label={label || "dropdown-list"}
-            $openUp={position.openUp}
-            style={{
-                top: position.top,
-                left: position.left,
-                width: position.width,
-            }}
-        >
-            {options.map((option) => (
-                <DropdownItem
-                    key={option}
-                    role="option"
-                    onClick={() => handleSelect(option)}
-                >
-                    {option}
-                </DropdownItem>
-            ))}
-        </DropdownList>
-    )
-
     return (
-        <SelectFrame>
+        <SelectFrame ref={ref}>
             {label && (
                 <LabelWrapper>
                     <Text font="TitleTiny">{label}</Text>
                 </LabelWrapper>
             )}
 
-            <SelectInner ref={ref}>
-                <DropdownContainer
-                    onClick={() => setOpen((s) => !s)}
-                    $open={open}
-                    role="button"
-                    aria-haspopup="listbox"
-                    aria-expanded={open}
-                    aria-controls={listIdRef.current}
-                >
-                    <SelectedText $placeholder={!value}>
-                        {value || placeholder}
-                    </SelectedText>
-                    {open ? (
-                        <ChevronUp size={20} color={colors.Gray600} />
-                    ) : (
-                        <ChevronDown size={20} color={colors.Gray600} />
-                    )}
-                </DropdownContainer>
+            <DropdownContainer
+                onClick={() => setOpen((s) => !s)}
+                $open={open}
+                role="button"
+                aria-haspopup="listbox"
+                aria-expanded={open}
+            >
+                <SelectedText $placeholder={!value}>
+                    {value || placeholder}
+                </SelectedText>
+                {open ? (
+                    <ChevronUp size={20} color={colors.Gray600} />
+                ) : (
+                    <ChevronDown size={20} color={colors.Gray600} />
+                )}
+            </DropdownContainer>
 
-                {open && createPortal(DropdownContent, document.body)}
-            </SelectInner>
+            {open && (
+                <DropdownList $openUp={openUp} role="listbox">
+                    {options.map((option) => (
+                        <DropdownItem
+                            key={option}
+                            role="option"
+                            onClick={() => handleSelect(option)}
+                        >
+                            {option}
+                        </DropdownItem>
+                    ))}
+                </DropdownList>
+            )}
         </SelectFrame>
     )
 }
@@ -184,11 +138,6 @@ const LabelWrapper = styled.div`
     align-items: center;
 `
 
-const SelectInner = styled.div`
-    position: relative;
-    width: 100%;
-`
-
 const DropdownContainer = styled.div<{ $open: boolean }>`
     display: flex;
     justify-content: space-between;
@@ -223,6 +172,20 @@ const SelectedText = styled.span<{ $placeholder: boolean }>`
 
 const DropdownList = styled.ul<{ $openUp: boolean }>`
     position: absolute;
+    ${({ $openUp }) =>
+        $openUp
+            ? css`
+                  bottom: calc(100% + 4px);
+                  transform-origin: bottom center;
+                  animation: ${fadeInUp} 0.16s ease forwards;
+              `
+            : css`
+                  top: calc(100% + 4px);
+                  transform-origin: top center;
+                  animation: ${fadeInDown} 0.16s ease forwards;
+              `}
+    left: 0;
+    width: 100%;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
@@ -231,18 +194,7 @@ const DropdownList = styled.ul<{ $openUp: boolean }>`
     list-style: none;
     padding: 8px 0;
     margin: 0;
-    z-index: 9999;
-
-    ${({ $openUp }) =>
-        $openUp
-            ? css`
-                  transform-origin: bottom center;
-                  animation: ${fadeInUp} 0.16s ease forwards;
-              `
-            : css`
-                  transform-origin: top center;
-                  animation: ${fadeInDown} 0.16s ease forwards;
-              `}
+    z-index: 999;
 
     &::-webkit-scrollbar {
         display: none;

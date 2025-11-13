@@ -11,7 +11,7 @@ interface ItemProps {
     onClick?: () => void
 }
 
-export function Select() {
+export function Plants() {
     const dummy: ItemProps[] = Array.from({ length: 6 }).map((_, i) => ({
         plant: "상추",
         name: `기기 ${i}`,
@@ -46,31 +46,45 @@ export function Select() {
 
 const Container = styled.div`
     width: 100%;
-    padding: 146px 16px 0;
+    padding: 100px 0;
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
     box-sizing: border-box;
 
     @media (max-width: 1024px) {
-        padding: 120px 12px 0;
+        padding: 80px 32px;
     }
 
     @media (max-width: 768px) {
-        padding: 100px 8px 0;
+        padding: 80px 20px;
     }
 `
 
 const Wrapper = styled.div`
     width: 100%;
-    max-width: 1200px;
+    max-width: 760px;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+    align-items: center;
+    gap: 60px;
+    padding: 100px 0;
     box-sizing: border-box;
 
-    @media (min-width: 1201px) {
-        align-items: center;
+    @media (max-width: 1024px) {
+        gap: 48px;
+        padding: 80px 32px;
+    }
+
+    @media (max-width: 768px) {
+        gap: 36px;
+        padding: 80px 20px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 60px 16px;
+        gap: 28px;
     }
 `
 
