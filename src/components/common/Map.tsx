@@ -1,60 +1,74 @@
 import { useEffect, useRef } from "react"
-import { colors } from "../../styles/colors"
 
 declare global {
     interface Window {
-        kakao?: any
+        kakao: any
     }
 }
 
 interface IProps {
-    lat: number
-    lng: number
+    coordinates: { lat: number; lng: number }[]
     level?: number
     height?: string
 }
 
-export function Map({ lat, lng, level = 3, height = "500px" }: IProps) {
+export function Map({ coordinates, level = 3, height = "500px" }: IProps) {
     const mapRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const mapScriptId = "kakao-map-script"
+        const mapScriptId = "kakao-map-sdk"
 
         if (window.kakao && window.kakao.maps) {
-            initMap()
+            window.kakao.maps.load(() => initMap())
             return
         }
 
-        if (document.getElementById(mapScriptId)) return
+        const existingScript = document.getElementById(mapScriptId)
+        if (existingScript) {
+            existingScript.addEventListener("load", () => {
+                window.kakao.maps.load(() => initMap())
+            })
+            return
+        }
 
         const script = document.createElement("script")
         script.id = mapScriptId
         script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_KEY}&autoload=false`
-        script.async = true
+        script.async = false
+        script.onload = () => {
+            window.kakao.maps.load(() => initMap())
+        }
+
         document.head.appendChild(script)
 
-        script.onload = () => {
-            if (window.kakao && window.kakao.maps) {
-                window.kakao.maps.load(initMap)
-            }
-        }
-
         function initMap() {
-            if (!mapRef.current || !window.kakao?.maps) return
+            if (!mapRef.current || coordinates.length === 0) return
+            const kakao = window.kakao
 
-            const options = {
-                center: new window.kakao.maps.LatLng(lat, lng),
+            const center = new kakao.maps.LatLng(
+                coordinates[0].lat,
+                coordinates[0].lng
+            )
+
+            const map = new kakao.maps.Map(mapRef.current, {
+                center,
                 level,
-            }
-
-            const map = new window.kakao.maps.Map(mapRef.current, options)
-
-            new window.kakao.maps.Marker({
-                position: new window.kakao.maps.LatLng(lat, lng),
-                map,
             })
+
+            coordinates.forEach(({ lat, lng }) => {
+                new kakao.maps.Marker({
+                    map,
+                    position: new kakao.maps.LatLng(lat, lng),
+                })
+            })
+
+            const bounds = new kakao.maps.LatLngBounds()
+            coordinates.forEach(({ lat, lng }) => {
+                bounds.extend(new kakao.maps.LatLng(lat, lng))
+            })
+            map.setBounds(bounds)
         }
-    }, [lat, lng, level])
+    }, [coordinates, level])
 
     return (
         <div
@@ -63,8 +77,7 @@ export function Map({ lat, lng, level = 3, height = "500px" }: IProps) {
                 width: "100%",
                 height,
                 borderRadius: "12px",
-                border: `1px solid ${colors.Gray400}`,
             }}
-        />
+        ></div>
     )
 }

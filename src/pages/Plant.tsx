@@ -11,10 +11,16 @@ export function Plant() {
     const [plant, setPlant] = useState<string>("")
     const options = ["상추", "딸기"]
 
+    const positions = [
+        { lat: 36.3916, lng: 127.3632 },
+        { lat: 36.3926, lng: 127.3635 },
+        { lat: 36.39146, lng: 127.3642 },
+    ]
+
     return (
         <Container>
             <Wrapper>
-                <Map lat={36.3916} lng={127.3632} />
+                <Map coordinates={positions} />
 
                 <InputWrapper>
                     <Dropdown
@@ -68,11 +74,11 @@ const Container = styled.div`
     }
 
     @media (max-width: 768px) {
-        padding: 80px 20px;
+        padding: 100px 20px;
     }
 
     @media (max-width: 480px) {
-        padding: 60px 16px;
+        padding: 120px 16px;
     }
 `
 
