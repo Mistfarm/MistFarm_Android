@@ -3,35 +3,75 @@ import { Button, Input, Text } from "../components/common"
 import { colors } from "../styles/colors"
 import { useForm } from "../hooks/useForm"
 import { useNavigate } from "react-router-dom"
+import { toast, ToastContainer } from "react-toastify"
+import { useEdit, useExit, useLogout } from "../apis/auth"
 
 export function Mypage() {
     const navigate = useNavigate()
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { form, setForm, handleChange } = useForm<{
-        user_id: string
+    const { form, handleChange } = useForm<{
+        name: string
         password: string
         newPassword: string
     }>({
-        user_id: "",
+        name: "",
         password: "",
         newPassword: "",
     })
 
-    const handleUserInfo = async (e: React.FormEvent<HTMLButtonElement>) => {
+    const { mutate: editInfo, isPending } = useEdit()
+    const { mutate: logout } = useLogout()
+    const { mutate: exit } = useExit()
+
+    const handleUserInfo = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        if (
+            (form.password && !form.newPassword) ||
+            (!form.password && form.newPassword)
+        ) {
+            toast.error("비밀번호 입력이 올바르지 않습니다.")
+            return
+        }
+        if (
+            form.password &&
+            form.newPassword &&
+            form.password === form.newPassword
+        ) {
+            toast.error("새 비밀번호는 기존 비밀번호와 달라야 합니다.")
+            return
+        }
 
-        // 로그인 로직
+        editInfo(
+            { name: form.name, password: form.password },
+            {
+                onSuccess: () => toast.success("정보가 수정되었습니다."),
+                onError: (error) =>
+                    toast.error(
+                        error.message || "알 수 없는 에러가 발생했습니다."
+                    ),
+            }
+        )
     }
 
-    const handleLogout = async () => {
-        // 로그아웃 로직
-        navigate("/")
+    const handleLogout = () => {
+        logout(undefined, {
+            onSuccess: () => {
+                toast.success("로그아웃 되었습니다.")
+                navigate("/login")
+            },
+            onError: () => toast.error("로그아웃에 실패했습니다."),
+        })
     }
 
-    const handleDeleteUser = async () => {
-        // 회원탈퇴 로직
-        navigate("/")
+    const handleDeleteUser = () => {
+        if (!window.confirm("정말 회원탈퇴를 진행하시겠습니까?")) return
+        exit(undefined, {
+            onSuccess: () => {
+                toast.success("회원탈퇴가 완료되었습니다.")
+                navigate("/")
+            },
+            onError: () => toast.error("회원탈퇴에 실패했습니다."),
+        })
     }
 
     return (
@@ -40,15 +80,15 @@ export function Mypage() {
                 <Form>
                     <Input
                         label="이름"
-                        placeholder="수정할 이름을 입력해주세요"
-                        name="user_id"
-                        value={form.user_id}
+                        placeholder="이름 입력"
+                        name="name"
+                        value={form.name}
                         onChange={handleChange}
                     />
                     <Input
                         label="현재 비밀번호"
                         type="password"
-                        placeholder="현재 비밀번호를 입력해주세요"
+                        placeholder="현재 비밀번호 입력"
                         name="password"
                         value={form.password}
                         onChange={handleChange}
@@ -56,29 +96,37 @@ export function Mypage() {
                     <Input
                         label="새 비밀번호"
                         type="password"
-                        placeholder="새 비밀번호를 입력해주세요"
+                        placeholder="새 비밀번호 입력"
                         name="newPassword"
                         value={form.newPassword}
                         onChange={handleChange}
                     />
-                    <Button size="large" onClick={handleUserInfo}>
+                    <Button
+                        size="large"
+                        color={isPending ? "gray" : "main"}
+                        onClick={handleUserInfo}
+                        disabled={isPending}
+                    >
                         정보 저장
                     </Button>
                 </Form>
 
                 <Logout>
-                    <Button onClick={handleLogout} size="large" kind="gray">
+                    <Button size="large" kind="gray" onClick={handleLogout}>
                         로그아웃
                     </Button>
                 </Logout>
 
                 <Delete>
-                    <Text onClick={handleDeleteUser} font="LabelLarge">
+                    <Text font="LabelLarge">
                         회원탈퇴 시 프로필 및 저장한 기기 정보가 삭제됩니다
                     </Text>
-
                     <DeleteButton>
-                        <Button size="large" kind="red">
+                        <Button
+                            size="large"
+                            kind="red"
+                            onClick={handleDeleteUser}
+                        >
                             회원탈퇴
                         </Button>
                     </DeleteButton>

@@ -1,10 +1,14 @@
 import styled from "styled-components"
 import { Input, Button, Text } from "../components/common"
 import { useForm } from "../hooks/useForm"
+import { useLogin } from "../apis/auth"
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 export function Login() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { form, setForm, handleChange } = useForm<{
+    const navigate = useNavigate()
+
+    const { form, handleChange } = useForm<{
         user_id: string
         password: string
     }>({
@@ -12,12 +16,26 @@ export function Login() {
         password: "",
     })
 
-    const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
+    const { mutate: login, isPending } = useLogin()
+
+    const handleLogin = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        if (!form.user_id || !form.password) {
+            toast.error("아이디와 비밀번호를 입력해주세요")
+            return
+        }
 
-        // 로그인 로직
+        login(
+            { id: form.user_id, password: form.password },
+            {
+                onSuccess: () => navigate("/"),
+                onError: (error) =>
+                    toast.error(
+                        error.message || "알 수 없는 에러가 발생했습니다."
+                    ),
+            }
+        )
     }
-
     return (
         <Main>
             <Form>
@@ -29,29 +47,30 @@ export function Login() {
                 </TitleBox>
                 <InputBox>
                     <Input
-                        placeholder="아이디를 입력해 주세요"
                         label="아이디"
+                        placeholder="아이디를 입력해 주세요"
                         name="user_id"
-                        required
                         value={form.user_id}
                         onChange={handleChange}
+                        required
                     />
                     <Input
-                        placeholder="비밀번호를 입력해 주세요 (8자 이상, 30자 이하)"
                         label="비밀번호"
+                        placeholder="비밀번호를 입력해 주세요"
                         name="password"
-                        required
                         type="password"
                         value={form.password}
                         onChange={handleChange}
+                        required
                     />
                 </InputBox>
                 <ButtonBox>
                     <Button
                         size="large"
                         full
-                        type="submit"
+                        color={isPending ? "gray" : "main"}
                         onClick={handleLogin}
+                        disabled={isPending}
                     >
                         로그인
                     </Button>
@@ -59,7 +78,7 @@ export function Login() {
                         <Text font="BodySmall" color="Gray500">
                             아직 회원이 아니신가요?
                         </Text>
-                        <a href="/signup">
+                        <a href="/register">
                             <Text font="LabelMedium" color="Green500">
                                 회원가입
                             </Text>
