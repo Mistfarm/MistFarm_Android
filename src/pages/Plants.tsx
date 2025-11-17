@@ -29,16 +29,18 @@ export function Plants() {
                     <Settings />
                 </Icon>
 
-                {dummy.map((v, i) => (
-                    <AreaItem
-                        key={i}
-                        plant={v.plant}
-                        name={v.name}
-                        state={v.state}
-                        type={v.type}
-                        onClick={v.onClick}
-                    />
-                ))}
+                <ItemContainer>
+                    {dummy.map((v, i) => (
+                        <AreaItem
+                            key={i}
+                            plant={v.plant}
+                            name={v.name}
+                            state={v.state}
+                            type={v.type}
+                            onClick={v.onClick}
+                        />
+                    ))}
+                </ItemContainer>
             </Wrapper>
         </Container>
     )
@@ -113,4 +115,14 @@ const Icon = styled.div`
         width: 44px;
         height: 44px;
     }
+`
+
+const ItemContainer = styled.div`
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
 `
