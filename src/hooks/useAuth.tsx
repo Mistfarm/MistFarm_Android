@@ -52,9 +52,12 @@ export const useAuth = () => {
     const ctx = useContext(AuthContext)
 
     if (!ctx) {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         return {
             isLogined: false,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             login: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             logout: () => {},
         }
     }
