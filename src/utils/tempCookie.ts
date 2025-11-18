@@ -9,14 +9,12 @@ class TempCookie {
     }
 
     setAccessToken(token: string) {
-        this.accessToken = token.startsWith("Bearer ") ? token.slice(7) : token
+        this.accessToken = token.replace("Bearer ", "")
         localStorage.setItem("accessToken", this.accessToken)
     }
 
-    getAccessToken(): string | null {
-        if (!this.accessToken) {
-            this.loadTokens()
-        }
+    getAccessToken() {
+        if (!this.accessToken) this.loadTokens()
         return this.accessToken ? `Bearer ${this.accessToken}` : null
     }
 
@@ -25,10 +23,8 @@ class TempCookie {
         localStorage.setItem("refreshToken", token)
     }
 
-    getRefreshToken(): string | null {
-        if (!this.refreshToken) {
-            this.loadTokens()
-        }
+    getRefreshToken() {
+        if (!this.refreshToken) this.loadTokens()
         return this.refreshToken
     }
 
@@ -40,10 +36,8 @@ class TempCookie {
     }
 
     loadTokens() {
-        if (typeof window !== "undefined") {
-            this.accessToken = localStorage.getItem("accessToken")
-            this.refreshToken = localStorage.getItem("refreshToken")
-        }
+        this.accessToken = localStorage.getItem("accessToken")
+        this.refreshToken = localStorage.getItem("refreshToken")
     }
 }
 
