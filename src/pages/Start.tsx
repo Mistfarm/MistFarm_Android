@@ -8,18 +8,24 @@ export function Start() {
 
     const token = tempCookie.getAccessToken()
 
-    const { data: userInfo, isError } = useGetInfo({
+    const {
+        data: userInfo,
+        isError,
+        isLoading,
+    } = useGetInfo({
         enabled: !!token,
         retry: 0,
     })
 
     useEffect(() => {
+        if (isLoading) return
+
         if (token && userInfo) {
             navigate("/plants")
         } else if (!token || isError) {
             navigate("/login")
         }
-    }, [token, userInfo, isError, navigate])
+    }, [token, userInfo, isError, isLoading, navigate])
 
     return null
 }

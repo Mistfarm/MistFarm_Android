@@ -12,12 +12,12 @@ export function Header() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const token = tempCookie.getAccessToken()
-    const { data: userInfo } = useGetInfo({
+    const { data: userInfo, isLoading } = useGetInfo({
         enabled: !!token,
         retry: 0,
     })
 
-    const isLogined = !!userInfo
+    const isLogined = !!userInfo && !isLoading
 
     const toggleMenu = () => setMenuOpen((prev) => !prev)
 
