@@ -1,15 +1,23 @@
 import styled from "styled-components"
 import Logo from "../../assets/Logo.png"
 import { useNavigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Menu, X } from "lucide-react"
 import { colors } from "../../styles/colors"
+import { useGetInfo } from "../../apis/auth"
+import { tempCookie } from "../../utils/tempCookie"
 
 export function Header() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isLogined, setIsLogined] = useState<boolean>(false)
-    const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate()
+    const [menuOpen, setMenuOpen] = useState(false)
+
+    const token = tempCookie.getAccessToken()
+    const { data: userInfo } = useGetInfo({
+        enabled: !!token,
+        retry: 0,
+    })
+
+    const isLogined = !!userInfo
 
     const toggleMenu = () => setMenuOpen((prev) => !prev)
 
@@ -81,7 +89,7 @@ export function Header() {
                             >
                                 기기관리
                             </NavButton>
-                            <NavButton onClick={() => handleNavClick("/plant")}>
+                            <NavButton onClick={() => handleNavClick("/area")}>
                                 구획관리
                             </NavButton>
                             <NavButton
@@ -162,7 +170,6 @@ const RightSection = styled.div`
     gap: 16px;
 `
 
-/* ✅ 데스크탑 전용 버튼 */
 const DesktopButtons = styled.div`
     display: flex;
     gap: 16px;
@@ -209,7 +216,6 @@ const LoginButton = styled.button`
     }
 `
 
-/* ✅ 모바일 전용 메뉴 버튼 */
 const MenuButton = styled.button`
     background: none;
     border: none;
@@ -221,7 +227,6 @@ const MenuButton = styled.button`
     }
 `
 
-/* ✅ 모바일 드롭다운 메뉴 */
 const MobileMenu = styled.div`
     display: flex;
     flex-direction: column;
