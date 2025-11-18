@@ -39,73 +39,110 @@ export function Register() {
     }
 
     return (
-        <Main>
-            <Form>
-                <TitleBox>
-                    <Text font="TitleLarge">회원가입</Text>
-                    <Text font="BodyMedium" color="Gray500">
-                        회원가입 하여 서비스를 이용해 보세요.
-                    </Text>
-                </TitleBox>
-                <InputBox>
-                    <Input
-                        label="이름"
-                        placeholder="이름 입력"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                    />
-                    <Input
-                        label="아이디"
-                        placeholder="아이디 입력"
-                        name="user_id"
-                        value={form.user_id}
-                        onChange={handleChange}
-                        required
-                    />
-                    <Input
-                        label="비밀번호"
-                        type="password"
-                        placeholder="비밀번호 입력"
-                        name="password"
-                        value={form.password}
-                        onChange={handleChange}
-                        required
-                    />
-                </InputBox>
-                <ButtonBox>
-                    <Button
-                        size="large"
-                        full
-                        color={isPending ? "gray" : "main"}
-                        onClick={handleRegister}
-                        disabled={isPending}
-                    >
-                        회원가입
-                    </Button>
-                    <QuestionBox>
-                        <Text font="BodySmall" color="Gray500">
-                            이미 회원이신가요?
+        <Container>
+            <Wrapper>
+                <Form>
+                    <TitleBox>
+                        <Text font="TitleLarge">회원가입</Text>
+                        <Text font="BodyMedium" color="Gray500">
+                            회원가입 하여 서비스를 이용해 보세요.
                         </Text>
-                        <a href="/login">
-                            <Text font="LabelMedium" color="Green500">
-                                로그인
+                    </TitleBox>
+                    <InputBox>
+                        <Input
+                            label="이름"
+                            placeholder="이름 입력"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            required
+                        />
+                        <Input
+                            label="아이디"
+                            placeholder="아이디 입력"
+                            name="user_id"
+                            value={form.user_id}
+                            onChange={handleChange}
+                            required
+                        />
+                        <Input
+                            label="비밀번호"
+                            type="password"
+                            placeholder="비밀번호 입력"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </InputBox>
+                    <ButtonBox>
+                        <Button
+                            size="large"
+                            full
+                            color={isPending ? "gray" : "main"}
+                            onClick={handleRegister}
+                            disabled={isPending}
+                        >
+                            회원가입
+                        </Button>
+                        <QuestionBox>
+                            <Text font="BodySmall" color="Gray500">
+                                이미 회원이신가요?
                             </Text>
-                        </a>
-                    </QuestionBox>
-                </ButtonBox>
-            </Form>
-        </Main>
+                            <a href="/login">
+                                <Text font="LabelMedium" color="Green500">
+                                    로그인
+                                </Text>
+                            </a>
+                        </QuestionBox>
+                    </ButtonBox>
+                </Form>
+            </Wrapper>
+        </Container>
     )
 }
 
-const Main = styled.main`
+const Container = styled.div`
+    width: 100%;
+    padding: 80px 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 80px;
-    min-height: calc(100dvh - 60px);
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        padding: 80px 32px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 80px 20px;
+    }
+`
+
+const Wrapper = styled.div`
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+    box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        gap: 48px;
+        padding: 80px 32px;
+    }
+
+    @media (max-width: 768px) {
+        gap: 36px;
+        padding: 80px 20px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 60px 16px;
+        gap: 28px;
+    }
 `
 
 const Form = styled.form`
