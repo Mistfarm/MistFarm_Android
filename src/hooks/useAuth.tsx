@@ -23,12 +23,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const checkAuth = async () => {
             const token = tempCookie.getAccessToken()
-            if (!token) return setIsLogined(false)
+
+            if (!token) {
+                setIsLogined(false)
+                return
+            }
 
             try {
                 await instance.get("/auth/check")
                 setIsLogined(true)
-            } catch (err) {
+            } catch {
                 tempCookie.clearTokens()
                 setIsLogined(false)
             }
@@ -46,6 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export const useAuth = () => {
     const ctx = useContext(AuthContext)
-    if (!ctx) throw new Error("useAuth must be used within AuthProvider")
+
+    if (!ctx) {
+        return {
+            isLogined: false,
+            login: () => {},
+            logout: () => {},
+        }
+    }
+
     return ctx
 }
