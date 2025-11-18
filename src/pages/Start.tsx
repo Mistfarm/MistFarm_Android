@@ -1,31 +1,15 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { tempCookie } from "../utils/tempCookie"
-import { useGetInfo } from "../apis/auth"
+import { useAuth } from "../hooks/useAuth"
 
 export function Start() {
     const navigate = useNavigate()
-
-    const token = tempCookie.getAccessToken()
-
-    const {
-        data: userInfo,
-        isError,
-        isLoading,
-    } = useGetInfo({
-        enabled: !!token,
-        retry: 0,
-    })
+    const { isLogined } = useAuth()
 
     useEffect(() => {
-        if (isLoading) return
-
-        if (token && userInfo) {
-            navigate("/plants")
-        } else if (!token || isError) {
-            navigate("/login")
-        }
-    }, [token, userInfo, isError, isLoading, navigate])
+        if (isLogined) navigate("/plants")
+        else navigate("/login")
+    }, [isLogined])
 
     return null
 }

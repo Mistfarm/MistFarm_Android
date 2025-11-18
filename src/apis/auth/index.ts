@@ -10,6 +10,7 @@ import {
     LoginResponse,
     RegisterRequest,
 } from "./type"
+import { useAuth } from "../../hooks/useAuth"
 
 export const useRegister = () => {
     const { mutate, ...rest } = useMutation<
@@ -30,6 +31,7 @@ export const useRegister = () => {
 }
 
 export const useLogin = () => {
+    const { login } = useAuth()
     const { mutate, ...rest } = useMutation<number, AxiosError, LoginRequest>({
         mutationFn: async (data) => {
             const response = await instance.post<LoginResponse>(
@@ -40,6 +42,7 @@ export const useLogin = () => {
             if (response.data.accessToken && response.data.refreshToken) {
                 tempCookie.setAccessToken(response.data.accessToken)
                 tempCookie.setRefreshToken(response.data.refreshToken)
+                login()
             } else {
                 console.error("토큰이 반환되지 않았습니다")
             }
@@ -56,6 +59,7 @@ export const useLogin = () => {
 }
 
 export const useLogout = () => {
+    const { logout } = useAuth()
     const { mutate, ...rest } = useMutation<number, AxiosError>({
         mutationFn: async () => {
             const accessToken = tempCookie.getAccessToken()
@@ -76,6 +80,7 @@ export const useLogout = () => {
                     },
                 })
                 tempCookie.clearTokens()
+                logout()
                 return 200
             } catch (error: any) {
                 tempCookie.clearTokens()
@@ -163,6 +168,7 @@ export const useGetInfo = (options = {}) => {
         },
         staleTime: 1000 * 60 * 5,
         retry: 1,
+        enabled: false,
         ...options,
     })
 }

@@ -4,20 +4,13 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { Menu, X } from "lucide-react"
 import { colors } from "../../styles/colors"
-import { useGetInfo } from "../../apis/auth"
-import { tempCookie } from "../../utils/tempCookie"
+import { useAuth } from "../../hooks/useAuth"
 
 export function Header() {
     const navigate = useNavigate()
     const [menuOpen, setMenuOpen] = useState(false)
 
-    const token = tempCookie.getAccessToken()
-    const { data: userInfo, isLoading } = useGetInfo({
-        enabled: !!token,
-        retry: 0,
-    })
-
-    const isLogined = !!userInfo && !isLoading
+    const { isLogined } = useAuth()
 
     const toggleMenu = () => setMenuOpen((prev) => !prev)
 
