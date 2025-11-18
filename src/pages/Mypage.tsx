@@ -3,7 +3,7 @@ import { Button, Input, Text } from "../components/common"
 import { colors } from "../styles/colors"
 import { useForm } from "../hooks/useForm"
 import { useNavigate } from "react-router-dom"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import { useEdit, useExit, useLogout } from "../apis/auth"
 
 export function Mypage() {
@@ -25,6 +25,7 @@ export function Mypage() {
 
     const handleUserInfo = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
+
         if (
             (form.password && !form.newPassword) ||
             (!form.password && form.newPassword)
@@ -32,6 +33,7 @@ export function Mypage() {
             toast.error("비밀번호 입력이 올바르지 않습니다.")
             return
         }
+
         if (
             form.password &&
             form.newPassword &&
@@ -41,16 +43,20 @@ export function Mypage() {
             return
         }
 
-        editInfo(
-            { name: form.name, password: form.password },
-            {
-                onSuccess: () => toast.success("정보가 수정되었습니다."),
-                onError: (error) =>
-                    toast.error(
-                        error.message || "알 수 없는 에러가 발생했습니다."
-                    ),
-            }
-        )
+        const payload: Partial<{ name: string; password: string }> = {}
+        if (form.name.trim()) payload.name = form.name.trim()
+        if (form.newPassword.trim()) payload.password = form.newPassword.trim()
+
+        if (Object.keys(payload).length === 0) {
+            toast.info("변경할 정보가 없습니다.")
+            return
+        }
+
+        editInfo(payload, {
+            onSuccess: () => toast.success("정보가 수정되었습니다."),
+            onError: (error) =>
+                toast.error(error.message || "알 수 없는 에러가 발생했습니다."),
+        })
     }
 
     const handleLogout = () => {

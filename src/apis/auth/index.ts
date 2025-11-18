@@ -58,9 +58,32 @@ export const useLogin = () => {
 export const useLogout = () => {
     const { mutate, ...rest } = useMutation<number, AxiosError>({
         mutationFn: async () => {
-            await instance.post("/auth/logout")
-            tempCookie.clearTokens()
-            return 200
+            const accessToken = tempCookie.getAccessToken()
+            const refreshToken = tempCookie.getRefreshToken()
+
+            if (!accessToken && !refreshToken) {
+                tempCookie.clearTokens()
+                return 200
+            }
+
+            try {
+                await instance.post("/auth/logout", undefined, {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: accessToken
+                            ? `Bearer ${accessToken}`
+                            : "",
+                    },
+                })
+                tempCookie.clearTokens()
+                return 200
+            } catch (error: any) {
+                tempCookie.clearTokens()
+                throw error
+            }
+        },
+        onSuccess: () => {
+            console.log("로그아웃 성공")
         },
         onError: (error) => {
             console.error("로그아웃 실패:", error.response?.data)
@@ -73,9 +96,29 @@ export const useLogout = () => {
 export const useExit = () => {
     const { mutate, ...rest } = useMutation<number, AxiosError>({
         mutationFn: async () => {
-            await instance.delete("/me")
-            tempCookie.clearTokens()
-            return 200
+            const accessToken = tempCookie.getAccessToken()
+            const refreshToken = tempCookie.getRefreshToken()
+
+            if (!accessToken && !refreshToken) {
+                tempCookie.clearTokens()
+                return 200
+            }
+
+            try {
+                await instance.delete("/me", {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: accessToken
+                            ? `Bearer ${accessToken}`
+                            : "",
+                    },
+                })
+                tempCookie.clearTokens()
+                return 200
+            } catch (error: any) {
+                tempCookie.clearTokens()
+                throw error
+            }
         },
         onError: (error) => {
             console.error("회원 탈퇴 실패:", error.response?.data)
@@ -88,7 +131,19 @@ export const useExit = () => {
 export const useEdit = () => {
     const { mutate, ...rest } = useMutation<number, AxiosError, EditRequest>({
         mutationFn: async (data) => {
-            const response = await instance.patch("/me", data)
+            const accessToken = tempCookie.getAccessToken()
+
+            if (!accessToken) {
+                return Promise.reject(new Error("로그인이 필요합니다."))
+            }
+
+            const response = await instance.patch("/me", data, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            })
+
             return response.status
         },
         onError: (error) => {
@@ -99,7 +154,7 @@ export const useEdit = () => {
     return { mutate, ...rest }
 }
 
-export const useGetInfo = () => {
+export const useGetInfo = (options = {}) => {
     return useQuery<InfoResponse, AxiosError>({
         queryKey: ["userInfo"],
         queryFn: async () => {
@@ -108,5 +163,6 @@ export const useGetInfo = () => {
         },
         staleTime: 1000 * 60 * 5,
         retry: 1,
+        ...options,
     })
 }

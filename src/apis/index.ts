@@ -10,7 +10,7 @@ const BASEURL = process.env.REACT_APP_BASE_URL
 const instance = axios.create({
     baseURL: BASEURL,
     timeout: 10000,
-    withCredentials: false,
+    withCredentials: true,
 })
 
 instance.interceptors.request.use(
