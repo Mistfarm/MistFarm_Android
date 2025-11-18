@@ -64,30 +64,38 @@ export const useLogout = () => {
             const accessToken = tempCookie.getAccessToken()
             const refreshToken = tempCookie.getRefreshToken()
 
-            if (!accessToken && !refreshToken) {
+            if (!accessToken || !refreshToken) {
                 tempCookie.clearTokens()
+                logout()
                 return 200
             }
 
             try {
-                await instance.post("/auth/logout", undefined, {
-                    headers: {
-                        Authorization: accessToken ?? "",
-                    },
-                    withCredentials: true,
-                })
+                await instance.post(
+                    "/auth/logout",
+                    { refreshToken },
+                    {
+                        headers: {
+                            Authorization: accessToken,
+                        },
+                        withCredentials: true,
+                    }
+                )
 
                 tempCookie.clearTokens()
                 logout()
                 return 200
-            } catch (error: any) {
+            } catch (error) {
                 tempCookie.clearTokens()
+                logout()
                 throw error
             }
         },
+
         onSuccess: () => {
             console.log("로그아웃 성공")
         },
+
         onError: (err) => {
             console.error("로그아웃 실패:", err.response?.data)
         },
