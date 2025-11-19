@@ -4,6 +4,7 @@ import { useGetInfo } from "../apis/auth"
 
 interface AuthContextType {
     isLogined: boolean
+    isLoading: boolean
     login: () => void
     logout: () => void
 }
@@ -12,6 +13,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLogined, setIsLogined] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const login = () => setIsLogined(true)
 
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (!token) {
                 setIsLogined(false)
+                setIsLoading(false)
                 return
             }
 
@@ -37,6 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } catch {
                 tempCookie.clearTokens()
                 setIsLogined(false)
+            } finally {
+                setIsLoading(false)
             }
         }
 
@@ -44,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [refetch])
 
     return (
-        <AuthContext.Provider value={{ isLogined, login, logout }}>
+        <AuthContext.Provider value={{ isLogined, isLoading, login, logout }}>
             {children}
         </AuthContext.Provider>
     )
@@ -54,12 +59,10 @@ export const useAuth = () => {
     const ctx = useContext(AuthContext)
 
     if (!ctx) {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         return {
             isLogined: false,
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            isLoading: false,
             login: () => {},
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
             logout: () => {},
         }
     }
