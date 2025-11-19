@@ -15,7 +15,7 @@ class TempCookie {
 
     getAccessToken() {
         if (!this.accessToken) this.loadTokens()
-        return this.accessToken ? `Bearer ${this.accessToken}` : null
+        return this.accessToken
     }
 
     setRefreshToken(token: string) {
