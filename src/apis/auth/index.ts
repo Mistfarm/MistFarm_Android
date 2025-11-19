@@ -59,12 +59,15 @@ export const useLogout = () => {
 }
 
 export const useExit = () => {
+    const { logout } = useAuth()
+
     return useMutation<number, AxiosError>({
         mutationFn: async () => {
             try {
                 await instance.delete("/me")
             } finally {
                 tempCookie.clearTokens()
+                logout()
             }
             return 200
         },
