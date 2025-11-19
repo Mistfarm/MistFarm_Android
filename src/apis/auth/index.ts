@@ -91,7 +91,6 @@ export const useGetInfo = (options = {}) => {
         gcTime: 0,
         retry: 0,
         enabled: false,
-        throwOnError: true,
         ...options,
     })
 }
