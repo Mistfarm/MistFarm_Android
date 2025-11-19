@@ -3,7 +3,9 @@ import { useAuth } from "../../hooks/useAuth"
 import { JSX } from "react"
 
 export function ProtectedRoute({ children }: { children: JSX.Element }) {
-    const { isLogined } = useAuth()
+    const { isLogined, isLoading } = useAuth()
+
+    if (isLoading) return null
 
     if (!isLogined) {
         return <Navigate to="/login" replace />

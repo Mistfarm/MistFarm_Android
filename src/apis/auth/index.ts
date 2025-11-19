@@ -168,9 +168,11 @@ export const useGetInfo = (options = {}) => {
             const res = await instance.get<InfoResponse>("/me")
             return res.data
         },
-        staleTime: 1000 * 60 * 5,
-        retry: 1,
+        staleTime: 0,
+        gcTime: 0,
+        retry: 0,
         enabled: false,
+        throwOnError: true,
         ...options,
     })
 }

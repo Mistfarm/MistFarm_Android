@@ -94,7 +94,7 @@ export function Mypage() {
         exit(undefined, {
             onSuccess: () => {
                 toast.success("회원탈퇴가 완료되었습니다.")
-                navigate("/")
+                navigate("/login")
             },
             onError: (error) => {
                 const err = error as AxiosError<any>
