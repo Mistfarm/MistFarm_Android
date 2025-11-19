@@ -13,7 +13,7 @@ instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         const token = tempCookie.getAccessToken()
         if (token) {
-            config.headers["Authorization"] = token
+            config.headers["Authorization"] = `Bearer ${token}`
         }
         return config
     },
