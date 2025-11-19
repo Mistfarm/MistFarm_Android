@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { tempCookie } from "../utils/tempCookie"
-import { useGetInfo } from "../apis/auth"
+import { instance } from "../apis"
 
 interface AuthContextType {
     isLogined: boolean
@@ -22,12 +22,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLogined(false)
     }
 
-    const { refetch } = useGetInfo({ enabled: false })
-
     useEffect(() => {
         const checkAuth = async () => {
             const token = tempCookie.getAccessToken()
-
             if (!token) {
                 setIsLogined(false)
                 setIsLoading(false)
@@ -35,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
 
             try {
-                await refetch()
+                await instance.get("/me")
                 setIsLogined(true)
             } catch {
                 tempCookie.clearTokens()
@@ -46,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         checkAuth()
-    }, [refetch])
+    }, [])
 
     return (
         <AuthContext.Provider value={{ isLogined, isLoading, login, logout }}>
@@ -62,7 +59,9 @@ export const useAuth = () => {
         return {
             isLogined: false,
             isLoading: false,
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             login: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             logout: () => {},
         }
     }
