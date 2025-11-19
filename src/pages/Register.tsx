@@ -4,6 +4,7 @@ import { useForm } from "../hooks/useForm"
 import { useRegister } from "../apis/auth"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
+import { AxiosError } from "axios"
 
 export function Register() {
     const navigate = useNavigate()
@@ -30,10 +31,15 @@ export function Register() {
             { name: form.name, id: form.user_id, password: form.password },
             {
                 onSuccess: () => navigate("/"),
-                onError: (error) =>
-                    toast.error(
-                        error.message || "알 수 없는 에러가 발생했습니다."
-                    ),
+                onError: (error) => {
+                    const err = error as AxiosError<any>
+                    const message =
+                        err.response?.data?.message ||
+                        err.message ||
+                        "알 수 없는 에러가 발생했습니다."
+
+                    toast.error(message)
+                },
             }
         )
     }

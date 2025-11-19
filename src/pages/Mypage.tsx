@@ -5,11 +5,12 @@ import { useForm } from "../hooks/useForm"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { useEdit, useExit, useLogout } from "../apis/auth"
+import { AxiosError } from "axios"
 
 export function Mypage() {
     const navigate = useNavigate()
 
-    const { form, handleChange } = useForm<{
+    const { form, handleChange, setForm } = useForm<{
         name: string
         password: string
         newPassword: string
@@ -53,9 +54,23 @@ export function Mypage() {
         }
 
         editInfo(payload, {
-            onSuccess: () => toast.success("정보가 수정되었습니다."),
-            onError: (error) =>
-                toast.error(error.message || "알 수 없는 에러가 발생했습니다."),
+            onSuccess: () => {
+                toast.success("정보가 수정되었습니다.")
+                setForm({
+                    name: "",
+                    password: "",
+                    newPassword: "",
+                })
+            },
+            onError: (error) => {
+                const err = error as AxiosError<any>
+                const message =
+                    err.response?.data?.message ||
+                    err.message ||
+                    "알 수 없는 에러가 발생했습니다."
+
+                toast.error(message)
+            },
         })
     }
 
@@ -65,7 +80,12 @@ export function Mypage() {
                 toast.success("로그아웃 되었습니다.")
                 navigate("/login")
             },
-            onError: () => toast.error("로그아웃에 실패했습니다."),
+            onError: (error) => {
+                const err = error as AxiosError<any>
+                toast.error(
+                    err.response?.data?.message || "로그아웃에 실패했습니다."
+                )
+            },
         })
     }
 
@@ -76,7 +96,12 @@ export function Mypage() {
                 toast.success("회원탈퇴가 완료되었습니다.")
                 navigate("/")
             },
-            onError: () => toast.error("회원탈퇴에 실패했습니다."),
+            onError: (error) => {
+                const err = error as AxiosError<any>
+                toast.error(
+                    err.response?.data?.message || "회원탈퇴에 실패했습니다."
+                )
+            },
         })
     }
 
