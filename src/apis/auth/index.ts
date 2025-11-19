@@ -13,152 +13,71 @@ import {
 import { useAuth } from "../../hooks/useAuth"
 
 export const useRegister = () => {
-    const { mutate, ...rest } = useMutation<
-        number,
-        AxiosError,
-        RegisterRequest
-    >({
+    return useMutation<number, AxiosError, RegisterRequest>({
         mutationFn: async (data) => {
             const res = await instance.post("/auth/signup", data)
             return res.status
         },
-        onError: (err) => {
-            console.error("회원가입 실패:", err.response?.data)
-        },
     })
-
-    return { mutate, ...rest }
 }
 
 export const useLogin = () => {
     const { login } = useAuth()
 
-    const { mutate, ...rest } = useMutation<number, AxiosError, LoginRequest>({
+    return useMutation<number, AxiosError, LoginRequest>({
         mutationFn: async (data) => {
             const res = await instance.post<LoginResponse>("/auth/login", data)
 
-            if (res.data.accessToken && res.data.refreshToken) {
-                tempCookie.setAccessToken(res.data.accessToken)
-                tempCookie.setRefreshToken(res.data.refreshToken)
-                login()
-            } else {
-                console.error("토큰이 반환되지 않았습니다")
-            }
+            tempCookie.setAccessToken(res.data.accessToken)
+            tempCookie.setRefreshToken(res.data.refreshToken)
+            login()
 
             return res.status
         },
-        onError: (error) => {
-            console.error("로그인 실패:", error.response?.data)
+        onError: () => {
             tempCookie.clearTokens()
         },
     })
-
-    return { mutate, ...rest }
 }
 
 export const useLogout = () => {
     const { logout } = useAuth()
 
-    const { mutate, ...rest } = useMutation<number, AxiosError>({
+    return useMutation<number, AxiosError>({
         mutationFn: async () => {
-            const accessToken = tempCookie.getAccessToken()
-            const refreshToken = tempCookie.getRefreshToken()
-
-            if (!accessToken || !refreshToken) {
-                tempCookie.clearTokens()
-                logout()
-                return 200
-            }
-
             try {
-                await instance.post(
-                    "/auth/logout",
-                    { refreshToken },
-                    {
-                        headers: {
-                            Authorization: accessToken,
-                        },
-                        withCredentials: true,
-                    }
-                )
-
+                await instance.post("/auth/logout", {
+                    refreshToken: tempCookie.getRefreshToken(),
+                })
+            } finally {
                 tempCookie.clearTokens()
                 logout()
-                return 200
-            } catch (error) {
-                tempCookie.clearTokens()
-                logout()
-                throw error
             }
-        },
-
-        onSuccess: () => {
-            console.log("로그아웃 성공")
-        },
-
-        onError: (err) => {
-            console.error("로그아웃 실패:", err.response?.data)
+            return 200
         },
     })
-
-    return { mutate, ...rest }
 }
 
 export const useExit = () => {
-    const { mutate, ...rest } = useMutation<number, AxiosError>({
+    return useMutation<number, AxiosError>({
         mutationFn: async () => {
-            const accessToken = tempCookie.getAccessToken()
-            const refreshToken = tempCookie.getRefreshToken()
-
-            if (!accessToken && !refreshToken) {
-                tempCookie.clearTokens()
-                return 200
-            }
-
             try {
-                await instance.delete("/me", {
-                    headers: {
-                        Authorization: accessToken ?? "",
-                    },
-                    withCredentials: true,
-                })
-
+                await instance.delete("/me")
+            } finally {
                 tempCookie.clearTokens()
-                return 200
-            } catch (error: any) {
-                tempCookie.clearTokens()
-                throw error
             }
-        },
-        onError: (err) => {
-            console.error("회원 탈퇴 실패:", err.response?.data)
+            return 200
         },
     })
-
-    return { mutate, ...rest }
 }
 
 export const useEdit = () => {
-    const { mutate, ...rest } = useMutation<number, AxiosError, EditRequest>({
+    return useMutation<number, AxiosError, EditRequest>({
         mutationFn: async (data) => {
-            const accessToken = tempCookie.getAccessToken()
-            if (!accessToken) throw new Error("로그인이 필요합니다.")
-
-            const res = await instance.patch("/me", data, {
-                headers: {
-                    Authorization: accessToken,
-                },
-                withCredentials: true,
-            })
-
+            const res = await instance.patch("/me", data)
             return res.status
         },
-        onError: (err) => {
-            console.error("회원 정보 수정 실패:", err.response?.data)
-        },
     })
-
-    return { mutate, ...rest }
 }
 
 export const useGetInfo = (options = {}) => {
