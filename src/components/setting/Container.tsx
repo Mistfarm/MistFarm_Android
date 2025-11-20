@@ -19,22 +19,13 @@ export function Container({ title, children, gap = 36 }: IProps) {
 }
 
 const Wrapper = styled.div`
-    width: 960px;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
     gap: 5px;
-
-    @media (max-width: 1024px) {
-        width: 100%;
-        padding: 0 32px;
-        box-sizing: border-box;
-    }
-
-    @media (max-width: 768px) {
-        padding: 0 20px;
-    }
+    box-sizing: border-box;
 `
 
 const Item = styled.div<{ $gap: number }>`
