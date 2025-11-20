@@ -1,7 +1,10 @@
 import styled from "styled-components"
 import { AreaItem } from "../components/setting"
-import { Settings } from "lucide-react"
 import { colors } from "../styles/colors"
+import { useNavigate } from "react-router-dom"
+import { Container as ContainerItem } from "../components/setting"
+import { Button, Input } from "../components/common"
+import { useForm } from "../hooks/useForm"
 
 interface ItemProps {
     plant?: string
@@ -11,7 +14,21 @@ interface ItemProps {
     onClick?: () => void
 }
 
-export function Plants() {
+export function Areas() {
+    const navigate = useNavigate()
+
+    const { form, handleChange } = useForm<{
+        area_id: string
+        area_password: string
+    }>({
+        area_id: "",
+        area_password: "",
+    })
+
+    const handleAdd = (e: React.FormEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+    }
+
     const dummy: ItemProps[] = Array.from({ length: 6 }).map((_, i) => ({
         plant: "상추",
         name: `기기 ${i}`,
@@ -25,11 +42,31 @@ export function Plants() {
     return (
         <Container>
             <Wrapper>
-                <Icon>
-                    <Settings />
-                </Icon>
+                <ContainerItem title="구획 등록">
+                    <Input
+                        label="구획 아이디"
+                        placeholder="구획 아이디를 입력하세요"
+                        value={form.area_id}
+                        name="area_id"
+                        onChange={handleChange}
+                    />
+                    <Input
+                        label="구획 비밀번호"
+                        placeholder="구획 비밀번호를 입력하세요"
+                        value={form.area_password}
+                        name="area_password"
+                        onChange={handleChange}
+                    />
+                    <ButtonWrapper>
+                        <Button onClick={handleAdd}>등록하기</Button>
+                    </ButtonWrapper>
+                </ContainerItem>
 
                 <ItemContainer>
+                    <AreaItem
+                        name="미설정 기기"
+                        onClick={() => navigate("/not-set")}
+                    />
                     {dummy.map((v, i) => (
                         <AreaItem
                             key={i}
@@ -48,7 +85,7 @@ export function Plants() {
 
 const Container = styled.div`
     width: 100%;
-    padding: 100px 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -70,7 +107,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 60px;
+    gap: 30px;
     padding: 100px 0;
     box-sizing: border-box;
 
@@ -125,4 +162,14 @@ const ItemContainer = styled.div`
     align-items: center;
     gap: 10px;
     box-sizing: border-box;
+`
+
+const ButtonWrapper = styled.div`
+    width: 160px;
+    margin-left: auto;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+    }
 `
