@@ -4,12 +4,13 @@ import { useAuth } from "../hooks/useAuth"
 
 export function Start() {
     const navigate = useNavigate()
-    const { isLogined } = useAuth()
+    const { isLogined, isLoading } = useAuth()
 
     useEffect(() => {
+        if (isLoading) return
         if (isLogined) navigate("/areas")
         else navigate("/login")
-    }, [isLogined])
+    }, [isLogined, isLoading])
 
     return null
 }
