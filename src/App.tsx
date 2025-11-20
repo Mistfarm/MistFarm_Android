@@ -45,7 +45,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/detail"
+                            path="/area/:id"
                             element={
                                 <ProtectedRoute>
                                     <Area />
