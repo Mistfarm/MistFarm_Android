@@ -43,7 +43,9 @@ export function NutrientRatioSet() {
                 {ratio} : {100 - ratio}
             </RatioText>
 
-            <Button size="large">저장</Button>
+            <ButtonWrapper>
+                <Button>양분비율 저장</Button>
+            </ButtonWrapper>
         </Wrapper>
     )
 }
@@ -102,5 +104,15 @@ const RatioText = styled.div`
     @media (max-width: 480px) {
         padding: 6px 0;
         font-size: 14px;
+    }
+`
+
+const ButtonWrapper = styled.div`
+    width: 160px;
+    margin-left: auto;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
     }
 `
