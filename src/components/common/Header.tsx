@@ -34,19 +34,6 @@ export function Header() {
                     <img src={Logo} alt="로고" />
                 </LogoButton>
 
-                <NavCenter>
-                    {isLogined && (
-                        <>
-                            <NavButton onClick={() => navigate("/device")}>
-                                기기관리
-                            </NavButton>
-                            <NavButton onClick={() => navigate("/area")}>
-                                구획관리
-                            </NavButton>
-                        </>
-                    )}
-                </NavCenter>
-
                 <RightSection>
                     <DesktopButtons>
                         {isLogined ? (
@@ -77,14 +64,6 @@ export function Header() {
                 <MobileMenu>
                     {isLogined ? (
                         <>
-                            <NavButton
-                                onClick={() => handleNavClick("/device")}
-                            >
-                                기기관리
-                            </NavButton>
-                            <NavButton onClick={() => handleNavClick("/area")}>
-                                구획관리
-                            </NavButton>
                             <NavButton
                                 onClick={() => handleNavClick("/mypage")}
                             >
@@ -142,18 +121,6 @@ const LogoButton = styled.button`
         @media (max-width: 500px) {
             width: 60px;
         }
-    }
-`
-
-const NavCenter = styled.nav`
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 24px;
-
-    @media (max-width: 768px) {
-        display: none;
     }
 `
 

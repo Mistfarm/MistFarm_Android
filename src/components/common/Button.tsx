@@ -3,7 +3,7 @@ import { colors } from "../../styles/colors"
 import { Fonts } from "../../styles/fonts"
 import styled from "styled-components"
 
-type KindType = "blue" | "gray" | "white" | "red"
+type KindType = "green" | "gray" | "white" | "red"
 
 type Props = ComponentProps<"button"> & {
     kind?: KindType
@@ -12,7 +12,7 @@ type Props = ComponentProps<"button"> & {
 }
 
 export const Button = ({
-    kind = "blue",
+    kind = "green",
     size = "medium",
     style,
     full = true,
@@ -20,7 +20,7 @@ export const Button = ({
     ...props
 }: Props) => {
     const KIND_STYLE: Record<KindType, CSSProperties> = {
-        blue: {
+        green: {
             backgroundColor: colors.Green500,
             color: colors.White,
         },
@@ -63,6 +63,9 @@ const ButtonTag = styled.button`
     cursor: pointer;
     border-radius: 12px;
     transition: 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &:hover {
         filter: brightness(0.95);
