@@ -1,20 +1,39 @@
 import styled from "styled-components"
-import { Text } from "../common"
+import { Button, Text } from "../common"
 import { colors } from "../../styles/colors"
 
 export function SupplyIntervalSet() {
     return (
         <Wrapper>
-            <Text font="TitleTiny" color="Black">
-                공급 간격 설정
-            </Text>
-            <TimeInputWrapper>
-                <TimeInput placeholder="00" />
-                <Separator>:</Separator>
-                <TimeInput placeholder="00" />
-                <Separator>:</Separator>
-                <TimeInput placeholder="00" />
-            </TimeInputWrapper>
+            <Section>
+                <Text font="TitleTiny" color="Black">
+                    켜져있는 시간 (ON)
+                </Text>
+                <TimeInputWrapper>
+                    <TimeInput placeholder="00" />
+                    <Separator>:</Separator>
+                    <TimeInput placeholder="00" />
+                    <Separator>:</Separator>
+                    <TimeInput placeholder="00" />
+                </TimeInputWrapper>
+            </Section>
+
+            <Section>
+                <Text font="TitleTiny" color="Black">
+                    꺼져있는 시간 (OFF)
+                </Text>
+                <TimeInputWrapper>
+                    <TimeInput placeholder="00" />
+                    <Separator>:</Separator>
+                    <TimeInput placeholder="00" />
+                    <Separator>:</Separator>
+                    <TimeInput placeholder="00" />
+                </TimeInputWrapper>
+            </Section>
+
+            <ButtonWrapper>
+                <Button>공급간격 저장</Button>
+            </ButtonWrapper>
         </Wrapper>
     )
 }
@@ -24,9 +43,15 @@ const Wrapper = styled.div`
     max-width: 800px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 16px;
+    gap: 32px;
     margin: 0 auto;
+`
+
+const Section = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 `
 
 const TimeInputWrapper = styled.div`
@@ -43,11 +68,11 @@ const TimeInput = styled.input`
     min-width: 40px;
     max-width: 72px;
     width: 15vw;
-    max-width: 72px;
     height: 48px;
     border-radius: 6px;
     border: none;
-    background-color: ${colors.Gray200};
+    background-color: ${colors.Gray100};
+    border: 1px solid ${colors.Gray300};
     color: ${colors.Black};
     text-align: center;
     font-size: 20px;
@@ -68,5 +93,15 @@ const Separator = styled.span`
 
     @media (max-width: 480px) {
         font-size: 16px;
+    }
+`
+
+const ButtonWrapper = styled.div`
+    width: 160px;
+    margin-left: auto;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
     }
 `
