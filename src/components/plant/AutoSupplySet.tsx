@@ -1,19 +1,61 @@
 import styled from "styled-components"
-import { Button, Text } from "../common"
+import { Text, Button } from "../common"
 import { colors } from "../../styles/colors"
+import { useState } from "react"
+import { SupplyIntervalSet } from "./SupplyIntervalSet"
 
 export function AutoSupplySet() {
+    const [mode, setMode] = useState<"auto" | "manual">("auto")
+    const [manualState, setManualState] = useState<"on" | "off">("off")
+
     return (
         <Wrapper>
             <Header>
-                <Text font="TitleTiny">자동 공급</Text>
-                <ToggleWrapper>
-                    <ToggleInput type="checkbox" id="autoToggle" />
-                    <ToggleLabel htmlFor="autoToggle" />
-                </ToggleWrapper>
+                <Text font="TitleTiny">공급 모드</Text>
             </Header>
 
-            <Button size="large">수동 공급</Button>
+            <ToggleGroup>
+                <ToggleOption
+                    active={mode === "auto"}
+                    onClick={() => setMode("auto")}
+                >
+                    자동 공급
+                </ToggleOption>
+
+                <ToggleOption
+                    active={mode === "manual"}
+                    onClick={() => setMode("manual")}
+                >
+                    수동 공급
+                </ToggleOption>
+
+                <ActiveBackground position={mode} />
+            </ToggleGroup>
+
+            {mode === "auto" && <SupplyIntervalSet />}
+
+            {mode === "manual" && (
+                <ManualWrapper>
+                    <Text font="TitleTiny">수동 제어</Text>
+
+                    <ManualToggle>
+                        <ManualButton
+                            active={manualState === "off"}
+                            onClick={() => setManualState("off")}
+                        >
+                            중단
+                        </ManualButton>
+
+                        <ManualButton
+                            active={manualState === "on"}
+                            onClick={() => setManualState("on")}
+                        >
+                            공급
+                        </ManualButton>
+                        <ManualBackground position={manualState} />
+                    </ManualToggle>
+                </ManualWrapper>
+            )}
         </Wrapper>
     )
 }
@@ -24,7 +66,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 32px;
     margin: 0 auto;
 `
 
@@ -35,46 +77,86 @@ const Header = styled.div`
     align-items: center;
 `
 
-const ToggleWrapper = styled.div`
+const ToggleGroup = styled.div`
+    width: 100%;
+    max-width: 700px;
+    height: 60px;
+    background: white;
+    border: 1px solid ${colors.Green500};
+    border-radius: 12px;
     position: relative;
-    width: 44px;
-    height: 24px;
-`
-
-const ToggleInput = styled.input`
-    opacity: 0;
-    width: 0;
-    height: 0;
-
-    &:checked + label {
-        background-color: ${colors.Green500};
-    }
-
-    &:checked + label::after {
-        left: 22px;
-    }
-`
-
-const ToggleLabel = styled.label`
-    position: absolute;
+    display: flex;
+    overflow: hidden;
     cursor: pointer;
-    background-color: ${colors.Gray400};
-    border-radius: 24px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: background-color 0.3s ease;
+`
 
-    &::after {
-        content: "";
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 18px;
-        height: 18px;
-        background: white;
-        border-radius: 50%;
-        transition: left 0.3s ease;
-    }
+const ToggleOption = styled.div<{ active: boolean }>`
+    flex: 1;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ active }) => (active ? "white" : colors.Green500)};
+    user-select: none;
+    transition: color 0.25s ease;
+`
+
+const ActiveBackground = styled.div<{ position: "auto" | "manual" }>`
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: ${colors.Green500};
+    border-radius: 12px;
+    transition: left 0.25s ease;
+
+    left: ${({ position }) => (position === "manual" ? "50%" : "0%")};
+`
+
+const ManualWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 12px;
+`
+
+const ManualToggle = styled.div`
+    width: 100%;
+    max-width: 700px;
+    height: 60px;
+    background: white;
+    border: 1px solid ${colors.Green500};
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    cursor: pointer;
+    margin: auto;
+`
+
+const ManualButton = styled.div<{ active: boolean }>`
+    flex: 1;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ active }) => (active ? "white" : colors.Green500)};
+    transition: color 0.25s ease;
+    cursor: pointer;
+`
+
+const ManualBackground = styled.div<{ position: "on" | "off" }>`
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: ${colors.Green500};
+    border-radius: 12px;
+    transition: left 0.25s ease;
+    left: ${({ position }) => (position === "off" ? "0%" : "50%")};
 `
