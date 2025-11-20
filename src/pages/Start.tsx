@@ -7,7 +7,7 @@ export function Start() {
     const { isLogined } = useAuth()
 
     useEffect(() => {
-        if (isLogined) navigate("/plants")
+        if (isLogined) navigate("/areas")
         else navigate("/login")
     }, [isLogined])
 
