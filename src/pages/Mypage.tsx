@@ -169,7 +169,7 @@ export function Mypage() {
 
 const Container = styled.div`
     width: 100%;
-    padding: 100px 0;
+    padding: 80px 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -192,7 +192,6 @@ const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 60px;
-    padding: 100px 0;
     box-sizing: border-box;
 
     @media (max-width: 1024px) {
