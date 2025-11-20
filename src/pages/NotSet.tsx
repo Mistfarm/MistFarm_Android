@@ -102,7 +102,7 @@ export function NotSet() {
                                 checkbox={true}
                                 name={v}
                                 key={i}
-                                button={false}
+                                type="deviceDelete"
                             />
                         ))}
                     </ContentContainer>

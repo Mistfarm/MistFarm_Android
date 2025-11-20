@@ -46,6 +46,10 @@ export function Area() {
         )
     }
 
+    const handleDeleteArea = () => {
+        // 구획 삭제 로직
+    }
+
     return (
         <Container>
             <Wrapper>
@@ -102,7 +106,19 @@ export function Area() {
                                 <AutoSupplySet />
                                 <NutrientRatioSet />
                             </AutoSettingContainer>
-                        </ItemContainer>{" "}
+                        </ItemContainer>
+
+                        <InfoWrapper>
+                            <ButtonWrapper>
+                                <Button
+                                    kind="red"
+                                    size="large"
+                                    onClick={handleDeleteArea}
+                                >
+                                    구획 삭제
+                                </Button>
+                            </ButtonWrapper>
+                        </InfoWrapper>
                     </>
                 )}
 
@@ -114,10 +130,9 @@ export function Area() {
                             <ButtonWrapper>
                                 <Button
                                     kind="gray"
-                                    size="large"
                                     onClick={handleDeleteSelectedDevices}
                                 >
-                                    <Trash2 />
+                                    기기 해제
                                 </Button>
                             </ButtonWrapper>
                         </SubTitle>
@@ -356,5 +371,6 @@ const DeviceItemWrapper = styled.div`
 `
 
 const ButtonWrapper = styled.div`
-    width: 80px;
+    width: 160px;
+    margin-left: auto;
 `
