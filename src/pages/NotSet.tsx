@@ -2,22 +2,13 @@ import styled from "styled-components"
 import { Dropdown, Button, Input, Text, Map } from "../components/common"
 import { AreaItem } from "../components/setting"
 import { useState } from "react"
-
-interface Device {
-    id: number
-    name: string
-    state: "success" | "fail"
-}
-
-interface Area {
-    id: number
-    plant: string
-    name: string
-    devices: Device[]
-}
+import { useCreateZone, useGetZoneDevices, useGetZoneList } from "../apis/zone"
+import { toast } from "react-toastify"
 
 export function NotSet() {
-    const [old, setOld] = useState<string>("")
+    const [selectedOldZone, setSelectedOldZone] = useState<string>("")
+    const [newZoneName, setNewZoneName] = useState("")
+    const [checkedDevices, setCheckedDevices] = useState<string[]>([])
 
     const positions = [
         { lat: 36.3916, lng: 127.3632 },
@@ -25,90 +16,105 @@ export function NotSet() {
         { lat: 36.39146, lng: 127.3642 },
     ]
 
-    const dummyAreas: Area[] = [
-        {
-            id: 1,
-            plant: "상추",
-            name: "구획 A",
-            devices: [
-                { id: 1, name: "기기 1", state: "success" },
-                { id: 2, name: "기기 2", state: "fail" },
-            ],
-        },
-        {
-            id: 2,
-            plant: "딸기",
-            name: "구획 B",
-            devices: [],
-        },
-        {
-            id: 3,
-            plant: "미정",
-            name: "구획 C",
-            devices: [],
-        },
-    ]
+    const { data: zonesData } = useGetZoneList()
+    const zones = zonesData?.zones ?? []
 
-    const dummyNotSettingItems = new Array(3)
-        .fill("")
-        .map((_, i) => `기기 ${i + 3}`)
+    const { data: devicesData } = useGetZoneDevices({ zone_id: "" })
+    const devices = devicesData?.devices ?? []
+
+    const createZoneMutation = useCreateZone()
+
+    const handleCheckDevice = (id: string) => {
+        setCheckedDevices((prev) =>
+            prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+        )
+    }
 
     const handleAddToOld = () => {
-        // 기존 구획에 추가 로직
+        if (!selectedOldZone) return toast.error("추가할 구획을 선택해주세요")
+        if (checkedDevices.length === 0)
+            return toast.error("추가할 기기를 선택해주세요")
+
+        // TODO: 서버에 기존 구획에 기기 추가 API 호출
+        toast.success(
+            `기기 ${checkedDevices.length}개가 ${selectedOldZone} 구획에 추가되었습니다.`
+        )
+        setCheckedDevices([])
     }
 
     const handleAddNew = () => {
-        // 새 구획 추가 로직
+        if (!newZoneName) return toast.error("구획 이름을 입력해주세요")
+        if (checkedDevices.length === 0)
+            return toast.error("추가할 기기를 선택해주세요")
+
+        createZoneMutation.mutate(
+            { zone_name: newZoneName, device_ids: checkedDevices },
+            {
+                onSuccess: () => {
+                    toast.success("구획이 생성되었습니다.")
+                    setNewZoneName("")
+                    setCheckedDevices([])
+                },
+                onError: (err: any) => {
+                    const message =
+                        err?.response?.data?.message ||
+                        err?.message ||
+                        "구획 생성에 실패했습니다."
+                    toast.error(message)
+                },
+            }
+        )
     }
 
     return (
-        <>
-            <Container title="구획 관리">
-                <MapWrapper>
-                    <Map coordinates={positions} />
-                </MapWrapper>
+        <Container title="구획 관리">
+            <MapWrapper>
+                <Map coordinates={positions} />
+            </MapWrapper>
 
-                <Wrapper>
-                    <ContentContainer>
-                        <Dropdown
-                            label="기존 구획에 추가"
-                            options={dummyAreas.map((v) => v.name)}
-                            onChange={setOld}
-                            placeholder="추가할 구획을 선택해주세요"
-                            value={old}
-                        />
-                        <ButtonWrapper>
-                            <Button onClick={handleAddToOld} size={"large"}>
-                                추가하기
-                            </Button>
-                        </ButtonWrapper>
-                    </ContentContainer>
-                    <ContentContainer>
-                        <Input
-                            label="새 구획에 추가"
-                            placeholder="새로 추가할 구획의 이름을 입력해주세요"
-                        />
-                        <ButtonWrapper>
-                            <Button onClick={handleAddNew} size={"large"}>
-                                생성하기
-                            </Button>
-                        </ButtonWrapper>
-                    </ContentContainer>
+            <Wrapper>
+                {/* 기존 구획에 추가 */}
+                <ContentContainer>
+                    <Dropdown
+                        label="기존 구획에 추가"
+                        options={zones.map((v) => v.name)}
+                        onChange={setSelectedOldZone}
+                        placeholder="추가할 구획을 선택해주세요"
+                        value={selectedOldZone}
+                    />
+                    <ButtonWrapper>
+                        <Button onClick={handleAddToOld} size="large">
+                            추가하기
+                        </Button>
+                    </ButtonWrapper>
+                </ContentContainer>
 
-                    <ContentContainer>
-                        <Text font="TitleTiny">미설정 기기</Text>
-                        {dummyNotSettingItems.map((v, i) => (
-                            <AreaItem
-                                checkbox={true}
-                                name={v}
-                                key={i}
-                                type="deviceDelete"
-                            />
-                        ))}
-                    </ContentContainer>
-                </Wrapper>
-            </Container>
-        </>
+                <ContentContainer>
+                    <Input
+                        label="새 구획에 추가"
+                        placeholder="새로 추가할 구획의 이름을 입력해주세요"
+                        value={newZoneName}
+                        onChange={(e) => setNewZoneName(e.target.value)}
+                    />
+                    <ButtonWrapper>
+                        <Button onClick={handleAddNew} size="large">
+                            생성하기
+                        </Button>
+                    </ButtonWrapper>
+                    <Text font="TitleTiny">미설정 기기</Text>
+                    {devices.map((v) => (
+                        <AreaItem
+                            key={v.devices_id}
+                            checkbox
+                            name={v.name}
+                            value={checkedDevices.includes(v.devices_id)}
+                            onCheck={() => handleCheckDevice(v.devices_id)}
+                            type="deviceDelete"
+                        />
+                    ))}
+                </ContentContainer>
+            </Wrapper>
+        </Container>
     )
 }
 
@@ -125,7 +131,6 @@ const Container = styled.div`
     @media (max-width: 1024px) {
         padding: 80px 32px;
     }
-
     @media (max-width: 768px) {
         padding: 80px 20px;
     }
@@ -143,11 +148,9 @@ const Wrapper = styled.div`
     @media (max-width: 1024px) {
         padding: 80px 32px;
     }
-
     @media (max-width: 768px) {
         padding: 80px 20px;
     }
-
     @media (max-width: 480px) {
         padding: 60px 16px;
     }
@@ -180,18 +183,15 @@ const MapWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 60px;
-    box-sizing: border-box;
 
     @media (max-width: 1024px) {
         padding: 0 32px;
         gap: 48px;
     }
-
     @media (max-width: 768px) {
         padding: 0 20px;
         gap: 36px;
     }
-
     @media (max-width: 480px) {
         padding: 0 16px;
         gap: 28px;
