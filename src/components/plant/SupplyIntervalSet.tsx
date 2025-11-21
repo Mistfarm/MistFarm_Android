@@ -1,8 +1,41 @@
 import styled from "styled-components"
 import { Button, Text } from "../common"
 import { colors } from "../../styles/colors"
+import { useState } from "react"
+import React from "react"
 
-export function SupplyIntervalSet() {
+interface Props {
+    defaultOn?: string
+    defaultOff?: string
+    onSubmit: (on: string, off: string) => void
+}
+
+export function SupplyIntervalSet({
+    defaultOn = "00:00:00",
+    defaultOff = "00:00:00",
+    onSubmit,
+}: Props) {
+    const [onValues, setOnValues] = useState(defaultOn.split(":"))
+    const [offValues, setOffValues] = useState(defaultOff.split(":"))
+
+    const handleChange = (
+        values: string[],
+        setValues: (v: string[]) => void,
+        idx: number,
+        val: string
+    ) => {
+        const numeric = val.replace(/\D/g, "").slice(0, 2)
+        const next = [...values]
+        next[idx] = numeric
+        setValues(next)
+    }
+
+    const handleSubmit = () => {
+        const onStr = onValues.map((v) => v.padStart(2, "0")).join(":")
+        const offStr = offValues.map((v) => v.padStart(2, "0")).join(":")
+        onSubmit(onStr, offStr)
+    }
+
     return (
         <Wrapper>
             <Section>
@@ -10,11 +43,23 @@ export function SupplyIntervalSet() {
                     켜져있는 시간 (ON)
                 </Text>
                 <TimeInputWrapper>
-                    <TimeInput placeholder="00" />
-                    <Separator>:</Separator>
-                    <TimeInput placeholder="00" />
-                    <Separator>:</Separator>
-                    <TimeInput placeholder="00" />
+                    {onValues.map((v, idx) => (
+                        <React.Fragment key={idx}>
+                            <TimeInput
+                                value={v}
+                                placeholder={["HH", "MM", "SS"][idx]}
+                                onChange={(e) =>
+                                    handleChange(
+                                        onValues,
+                                        setOnValues,
+                                        idx,
+                                        e.target.value
+                                    )
+                                }
+                            />
+                            {idx < 2 && <Separator>:</Separator>}
+                        </React.Fragment>
+                    ))}
                 </TimeInputWrapper>
             </Section>
 
@@ -23,16 +68,28 @@ export function SupplyIntervalSet() {
                     꺼져있는 시간 (OFF)
                 </Text>
                 <TimeInputWrapper>
-                    <TimeInput placeholder="00" />
-                    <Separator>:</Separator>
-                    <TimeInput placeholder="00" />
-                    <Separator>:</Separator>
-                    <TimeInput placeholder="00" />
+                    {offValues.map((v, idx) => (
+                        <React.Fragment key={idx}>
+                            <TimeInput
+                                value={v}
+                                placeholder={["HH", "MM", "SS"][idx]}
+                                onChange={(e) =>
+                                    handleChange(
+                                        offValues,
+                                        setOffValues,
+                                        idx,
+                                        e.target.value
+                                    )
+                                }
+                            />
+                            {idx < 2 && <Separator>:</Separator>}
+                        </React.Fragment>
+                    ))}
                 </TimeInputWrapper>
             </Section>
 
             <ButtonWrapper>
-                <Button>공급간격 저장</Button>
+                <Button onClick={handleSubmit}>공급간격 저장</Button>
             </ButtonWrapper>
         </Wrapper>
     )

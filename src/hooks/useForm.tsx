@@ -13,5 +13,9 @@ export function useForm<T>(initialState: T) {
         }))
     }
 
-    return { form, setForm, handleChange }
+    const reset = () => {
+        setForm(initialState)
+    }
+
+    return { form, setForm, handleChange, reset }
 }
