@@ -1,43 +1,49 @@
 import styled from "styled-components"
 import { AreaItem } from "../components/setting"
-import { colors } from "../styles/colors"
 import { useNavigate } from "react-router-dom"
 import { Container as ContainerItem } from "../components/setting"
 import { Button, Input } from "../components/common"
 import { useForm } from "../hooks/useForm"
-
-interface ItemProps {
-    plant?: string
-    name?: string
-    state?: "success" | "fail"
-    type?: "select" | "areaDelete" | "deviceDelete"
-    onClick?: () => void
-}
+import {
+    useGetZoneList,
+    useRegisterZone,
+    useGetZoneDevices,
+} from "../apis/zone"
+import { useState, useEffect } from "react"
 
 export function Areas() {
     const navigate = useNavigate()
 
-    const { form, handleChange } = useForm<{
-        area_id: string
-        area_password: string
+    const { form, handleChange, reset } = useForm<{
+        zone_auth_id: string
+        zone_pw: string
     }>({
-        area_id: "",
-        area_password: "",
+        zone_auth_id: "",
+        zone_pw: "",
     })
+
+    const [selectedZoneId] = useState<string>("")
+
+    const { data: zoneList } = useGetZoneList()
+    const { mutate: registerZone } = useRegisterZone()
+    const { data: devices, refetch: refetchDevices } = useGetZoneDevices(
+        { zone_id: selectedZoneId },
+        { enabled: false }
+    )
 
     const handleAdd = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        registerZone(form, {
+            onSuccess: () => {
+                reset()
+                if (selectedZoneId) refetchDevices()
+            },
+        })
     }
 
-    const dummy: ItemProps[] = Array.from({ length: 6 }).map((_, i) => ({
-        plant: "상추",
-        name: `기기 ${i}`,
-        state: i % 2 === 0 ? "success" : "fail",
-        type: "select",
-        onClick: function () {
-            console.log("Hello World!")
-        },
-    }))
+    useEffect(() => {
+        if (selectedZoneId) refetchDevices()
+    }, [selectedZoneId])
 
     return (
         <Container>
@@ -46,15 +52,15 @@ export function Areas() {
                     <Input
                         label="구획 아이디"
                         placeholder="구획 아이디를 입력하세요"
-                        value={form.area_id}
-                        name="area_id"
+                        value={form.zone_auth_id}
+                        name="zone_auth_id"
                         onChange={handleChange}
                     />
                     <Input
                         label="구획 비밀번호"
                         placeholder="구획 비밀번호를 입력하세요"
-                        value={form.area_password}
-                        name="area_password"
+                        value={form.zone_pw}
+                        name="zone_pw"
                         onChange={handleChange}
                     />
                     <ButtonWrapper>
@@ -63,20 +69,33 @@ export function Areas() {
                 </ContainerItem>
 
                 <ItemContainer>
-                    <AreaItem
-                        name="미설정 기기"
-                        onClick={() => navigate("/not-set")}
-                    />
-                    {dummy.map((v, i) => (
+                    {zoneList?.zones?.[0] && (
                         <AreaItem
-                            key={i}
-                            plant={v.plant}
-                            name={v.name}
-                            state={v.state}
-                            type={v.type}
-                            onClick={v.onClick}
+                            plant={zoneList.zones[0].plant}
+                            name={zoneList.zones[0].name}
+                            type="select"
+                            onClick={() => navigate("/not-set")}
+                        />
+                    )}
+
+                    {zoneList?.zones?.slice(1).map((zone) => (
+                        <AreaItem
+                            key={zone.id}
+                            plant={zone.plant}
+                            name={zone.name}
+                            type="select"
+                            onClick={() => navigate(`/area/${zone.id}`)}
                         />
                     ))}
+
+                    {selectedZoneId &&
+                        devices?.devices?.map((d) => (
+                            <AreaItem
+                                key={d.devices_id}
+                                name={d.name}
+                                type="deviceDelete"
+                            />
+                        ))}
                 </ItemContainer>
             </Wrapper>
         </Container>
@@ -124,33 +143,6 @@ const Wrapper = styled.div`
     @media (max-width: 480px) {
         padding: 60px 16px;
         gap: 28px;
-    }
-`
-
-const Icon = styled.div`
-    margin-left: auto;
-    background-color: ${colors.Gray100};
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 200ms;
-
-    &:hover {
-        background-color: ${colors.Gray200};
-    }
-
-    @media (max-width: 1024px) {
-        width: 52px;
-        height: 52px;
-    }
-
-    @media (max-width: 768px) {
-        width: 44px;
-        height: 44px;
     }
 `
 

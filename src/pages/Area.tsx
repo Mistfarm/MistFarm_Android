@@ -1,25 +1,24 @@
 import styled from "styled-components"
 import { Button, Dropdown, Map, Text } from "../components/common"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { colors } from "../styles/colors"
 import { Info } from "../components/plant/Info"
 import { AutoSupplySet } from "../components/plant/AutoSupplySet"
-import { SupplyIntervalSet } from "../components/plant/SupplyIntervalSet"
 import { NutrientRatioSet } from "../components/plant/NutrientRatioSet"
 import { AreaItem } from "../components/setting"
-import { Trash2 } from "lucide-react"
-
-interface Device {
-    id: number
-    name: string
-    state: "success" | "fail"
-}
+import { useParams } from "react-router-dom"
+import { useGetZoneSetting, useSelectPlant } from "../apis/plant"
+import { useDeleteZone, useGetZoneDevices, useDeleteDevice } from "../apis/zone"
+import { toast } from "react-toastify"
 
 export function Area() {
-    const [plant, setPlant] = useState<string>("")
+    const { id } = useParams<{ id: string }>()
+    const zoneId = id ?? ""
+
     const [viewMode, setViewMode] = useState<"plant" | "device">("plant")
-    const [checkedDevices, setCheckedDevices] = useState<number[]>([])
-    const options = ["상추", "딸기"]
+    const [checkedDevices, setCheckedDevices] = useState<string[]>([])
+
+    const options = ["고사리", "딸기"]
 
     const positions = [
         { lat: 36.3916, lng: 127.3632 },
@@ -27,27 +26,83 @@ export function Area() {
         { lat: 36.39146, lng: 127.3642 },
     ]
 
-    const dummy: Device[] = [
-        { id: 1, name: "기기 1", state: "success" },
-        { id: 2, name: "기기 2", state: "fail" },
-    ]
-    const [devices, setDevices] = useState<Device[]>(dummy)
+    const { data: setting } = useGetZoneSetting(zoneId)
+    const selectPlantMutation = useSelectPlant()
+    const [plant, setPlant] = useState<string>("")
 
-    const handleDeleteSelectedDevices = () => {
-        setDevices((prev) =>
-            prev.filter((device) => !checkedDevices.includes(device.id))
+    useEffect(() => {
+        if (setting?.plant) setPlant(setting.plant)
+    }, [setting])
+
+    useEffect(() => {
+        if (!plant) return
+        const timer = setTimeout(() => {
+            selectPlantMutation.mutate(
+                { zone_id: zoneId, plant },
+                {
+                    onSuccess: () =>
+                        toast.success(`${plant}으로 변경되었습니다.`),
+                    onError: (err: any) => {
+                        const message =
+                            err?.response?.data?.message ||
+                            err?.message ||
+                            JSON.stringify(err) ||
+                            "식물 변경에 실패했습니다."
+                        toast.error(message)
+                    },
+                }
+            )
+        }, 400)
+
+        return () => clearTimeout(timer)
+    }, [plant])
+
+    const deleteZoneMutation = useDeleteZone()
+    const handleDeleteArea = () => {
+        if (!zoneId) return toast.error("유효하지 않은 구획입니다.")
+
+        deleteZoneMutation.mutate(
+            { zone_ids: [zoneId] },
+            {
+                onSuccess: () => toast.success("구획이 삭제되었습니다."),
+                onError: (err: any) =>
+                    toast.error(
+                        err?.response?.data?.message || "구획 삭제 실패"
+                    ),
+            }
         )
-        setCheckedDevices([])
     }
 
-    const handleCheckDevice = (id: number) => {
+    const { data: devicesData, refetch: refetchDevices } = useGetZoneDevices(
+        { zone_id: zoneId },
+        { enabled: !!zoneId }
+    )
+    const devices = devicesData?.devices ?? []
+
+    const handleCheckDevice = (id: string) => {
         setCheckedDevices((prev) =>
             prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
         )
     }
 
-    const handleDeleteArea = () => {
-        // 구획 삭제 로직
+    const deleteDeviceMutation = useDeleteDevice()
+    const handleDeleteSelectedDevices = () => {
+        if (!zoneId || checkedDevices.length === 0) return
+        deleteDeviceMutation.mutate(
+            { zone_id: zoneId, device_ids: checkedDevices },
+            {
+                onSuccess: () => {
+                    toast.success("선택된 기기가 삭제되었습니다.")
+                    setCheckedDevices([])
+                    refetchDevices()
+                },
+                onError: (err: any) => {
+                    toast.error(
+                        err?.response?.data?.message || "기기 삭제 실패"
+                    )
+                },
+            }
+        )
     }
 
     return (
@@ -55,20 +110,18 @@ export function Area() {
             <Wrapper>
                 <TopToggle>
                     <TopToggleOption
-                        active={viewMode === "plant"}
+                        $active={viewMode === "plant"}
                         onClick={() => setViewMode("plant")}
                     >
                         식물 설정
                     </TopToggleOption>
-
                     <TopToggleOption
-                        active={viewMode === "device"}
+                        $active={viewMode === "device"}
                         onClick={() => setViewMode("device")}
                     >
                         기기 리스트
                     </TopToggleOption>
-
-                    <TopToggleActive position={viewMode} />
+                    <TopToggleActive $position={viewMode} />
                 </TopToggle>
 
                 {viewMode === "plant" && (
@@ -83,28 +136,40 @@ export function Area() {
                                 onChange={(e) => setPlant(e)}
                             />
                         </InputWrapper>
+
                         <ItemContainer>
                             <InfoWrapper>
-                                <Info type="plant" percentage={40} size={200} />
-
+                                <Info
+                                    type="plant"
+                                    percentage={
+                                        ((setting?.growth_level ?? 0) / 6) * 100
+                                    }
+                                    size={200}
+                                />
                                 <EnvironmentWrapper>
                                     <Text font="TitleTiny" color="Gray500">
                                         식물 환경 조회
                                     </Text>
                                     <EnvironmentValues>
-                                        <Info type="water" percentage={40} />
+                                        <Info
+                                            type="water"
+                                            percentage={setting?.humidity ?? 0}
+                                        />
                                         <Info
                                             type="temperature"
-                                            percentage={40}
+                                            percentage={
+                                                setting?.temperature ?? 0
+                                            }
                                         />
                                     </EnvironmentValues>
                                 </EnvironmentWrapper>
                             </InfoWrapper>
                         </ItemContainer>
+
                         <ItemContainer>
                             <AutoSettingContainer>
-                                <AutoSupplySet />
-                                <NutrientRatioSet />
+                                <AutoSupplySet zoneId={zoneId} />
+                                <NutrientRatioSet zoneId={zoneId} />
                             </AutoSettingContainer>
                         </ItemContainer>
 
@@ -126,32 +191,32 @@ export function Area() {
                     <DeviceListContainer>
                         <SubTitle>
                             <Text font="TitleTiny">연결된 기기 리스트</Text>
-
                             <ButtonWrapper>
                                 <Button
                                     kind="gray"
                                     onClick={handleDeleteSelectedDevices}
                                 >
-                                    기기 해제
+                                    선택 기기 삭제
                                 </Button>
                             </ButtonWrapper>
                         </SubTitle>
 
-                        {dummy &&
-                            dummy.map((v, i) => (
-                                <DeviceItemWrapper key={v.id}>
-                                    <AreaItem
-                                        key={i}
-                                        checkbox={true}
-                                        button={false}
-                                        type="deviceDelete"
-                                        name={v.name}
-                                        value={checkedDevices.includes(v.id)}
-                                        state={v.state}
-                                        onCheck={() => handleCheckDevice(v.id)}
-                                    />
-                                </DeviceItemWrapper>
-                            ))}
+                        {devices.map((device) => (
+                            <DeviceItemWrapper key={device.devices_id}>
+                                <AreaItem
+                                    checkbox
+                                    button={false}
+                                    type="deviceDelete"
+                                    name={device.name}
+                                    value={checkedDevices.includes(
+                                        device.devices_id
+                                    )}
+                                    onCheck={() =>
+                                        handleCheckDevice(device.devices_id)
+                                    }
+                                />
+                            </DeviceItemWrapper>
+                        ))}
                     </DeviceListContainer>
                 )}
             </Wrapper>
@@ -320,7 +385,7 @@ const TopToggle = styled.div`
     cursor: pointer;
 `
 
-const TopToggleOption = styled.div<{ active: boolean }>`
+const TopToggleOption = styled.div<{ $active: boolean }>`
     flex: 1;
     z-index: 2;
     display: flex;
@@ -328,12 +393,12 @@ const TopToggleOption = styled.div<{ active: boolean }>`
     justify-content: center;
     font-size: 16px;
     font-weight: 600;
-    color: ${({ active }) => (active ? "white" : colors.Green500)};
+    color: ${({ $active }) => ($active ? "white" : colors.Green500)};
     user-select: none;
     transition: color 0.25s ease;
 `
 
-const TopToggleActive = styled.div<{ position: "plant" | "device" }>`
+const TopToggleActive = styled.div<{ $position: "plant" | "device" }>`
     position: absolute;
     top: 0;
     bottom: 0;
@@ -342,7 +407,7 @@ const TopToggleActive = styled.div<{ position: "plant" | "device" }>`
     border-radius: 12px;
     transition: left 0.25s ease;
 
-    left: ${({ position }) => (position === "plant" ? "0%" : "50%")};
+    left: ${({ $position }) => ($position === "plant" ? "0%" : "50%")};
 `
 
 const DeviceListContainer = styled.div`

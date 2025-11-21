@@ -1,17 +1,50 @@
 import styled from "styled-components"
 import { Button, Text } from "../common"
 import { colors } from "../../styles/colors"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSetNutrient, useGetZoneSetting } from "../../apis/plant"
+import { AxiosError } from "axios"
+import { toast } from "react-toastify"
+
+interface Props {
+    zoneId: string
+}
 
 interface SliderProps {
     value: number
 }
 
-export function NutrientRatioSet() {
+export function NutrientRatioSet({ zoneId }: Props) {
+    const { data, refetch } = useGetZoneSetting(zoneId)
+    const setNutrientMutation = useSetNutrient()
+
     const [ratio, setRatio] = useState<number>(0)
+
+    useEffect(() => {
+        if (!data) return
+        if ("nutrients_rate" in data) setRatio(data.nutrients_rate)
+    }, [data])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRatio(Number(e.target.value))
+    }
+
+    const handleSave = () => {
+        setNutrientMutation.mutate(
+            { zone_id: zoneId, nutrients_rate: ratio },
+            {
+                onSuccess: () => refetch(),
+                onError: (error) => {
+                    const err = error as AxiosError<any>
+                    const message =
+                        err.response?.data?.message ||
+                        err.message ||
+                        "알 수 없는 에러가 발생했습니다."
+
+                    toast.error(message)
+                },
+            }
+        )
     }
 
     return (
@@ -44,7 +77,7 @@ export function NutrientRatioSet() {
             </RatioText>
 
             <ButtonWrapper>
-                <Button>양분비율 저장</Button>
+                <Button onClick={handleSave}>양분비율 저장</Button>
             </ButtonWrapper>
         </Wrapper>
     )

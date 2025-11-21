@@ -1,12 +1,106 @@
 import styled from "styled-components"
-import { Text, Button } from "../common"
+import { Text } from "../common"
 import { colors } from "../../styles/colors"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SupplyIntervalSet } from "./SupplyIntervalSet"
+import {
+    useGetZoneSetting,
+    useSetMode,
+    useSetPower,
+    useSetFogCycle,
+} from "../../apis/plant"
+import { AxiosError } from "axios"
+import { toast } from "react-toastify"
 
-export function AutoSupplySet() {
+interface Props {
+    zoneId: string
+}
+
+export function AutoSupplySet({ zoneId }: Props) {
+    const { data, refetch } = useGetZoneSetting(zoneId)
+
+    const setModeMutation = useSetMode()
+    const setPowerMutation = useSetPower()
+    const setFogCycleMutation = useSetFogCycle()
+
     const [mode, setMode] = useState<"auto" | "manual">("auto")
     const [manualState, setManualState] = useState<"on" | "off">("off")
+
+    useEffect(() => {
+        if (!data) return
+        if (data.mode === true) {
+            setMode("auto")
+        } else {
+            setMode("manual")
+            setManualState(data.power ? "on" : "off")
+        }
+    }, [data])
+
+    const handleChangeMode = (next: "auto" | "manual") => {
+        setMode(next)
+        setModeMutation.mutate(
+            {
+                zone_id: zoneId,
+                mode: next === "auto",
+            },
+            {
+                onSuccess: () => refetch(),
+                onError: (error) => {
+                    const err = error as AxiosError<any>
+                    const message =
+                        err.response?.data?.message ||
+                        err.message ||
+                        "알 수 없는 에러가 발생했습니다."
+
+                    toast.error(message)
+                },
+            }
+        )
+    }
+
+    const handleChangeManualPower = (next: "on" | "off") => {
+        setManualState(next)
+        setPowerMutation.mutate(
+            {
+                zone_id: zoneId,
+                power: next === "on",
+            },
+            {
+                onSuccess: () => refetch(),
+                onError: (error) => {
+                    const err = error as AxiosError<any>
+                    const message =
+                        err.response?.data?.message ||
+                        err.message ||
+                        "알 수 없는 에러가 발생했습니다."
+
+                    toast.error(message)
+                },
+            }
+        )
+    }
+
+    const handleIntervalChange = (on: string, off: string) => {
+        setFogCycleMutation.mutate(
+            {
+                zone_id: zoneId,
+                on_interval: on,
+                off_interval: off,
+            },
+            {
+                onSuccess: () => refetch(),
+                onError: (error) => {
+                    const err = error as AxiosError<any>
+                    const message =
+                        err.response?.data?.message ||
+                        err.message ||
+                        "알 수 없는 에러가 발생했습니다."
+
+                    toast.error(message)
+                },
+            }
+        )
+    }
 
     return (
         <Wrapper>
@@ -16,23 +110,33 @@ export function AutoSupplySet() {
 
             <ToggleGroup>
                 <ToggleOption
-                    active={mode === "auto"}
-                    onClick={() => setMode("auto")}
+                    $active={mode === "auto"}
+                    onClick={() => handleChangeMode("auto")}
                 >
                     자동 공급
                 </ToggleOption>
 
                 <ToggleOption
-                    active={mode === "manual"}
-                    onClick={() => setMode("manual")}
+                    $active={mode === "manual"}
+                    onClick={() => handleChangeMode("manual")}
                 >
                     수동 공급
                 </ToggleOption>
 
-                <ActiveBackground position={mode} />
+                <ActiveBackground $position={mode} />
             </ToggleGroup>
 
-            {mode === "auto" && <SupplyIntervalSet />}
+            {mode === "auto" && (
+                <SupplyIntervalSet
+                    defaultOn={
+                        data?.mode === true ? data.on_interval : "00:00:00"
+                    }
+                    defaultOff={
+                        data?.mode === true ? data.off_interval : "00:00:00"
+                    }
+                    onSubmit={handleIntervalChange}
+                />
+            )}
 
             {mode === "manual" && (
                 <ManualWrapper>
@@ -40,15 +144,15 @@ export function AutoSupplySet() {
 
                     <ManualToggle>
                         <ManualButton
-                            active={manualState === "off"}
-                            onClick={() => setManualState("off")}
+                            $active={manualState === "off"}
+                            onClick={() => handleChangeManualPower("off")}
                         >
                             중단
                         </ManualButton>
 
                         <ManualButton
-                            active={manualState === "on"}
-                            onClick={() => setManualState("on")}
+                            $active={manualState === "on"}
+                            onClick={() => handleChangeManualPower("on")}
                         >
                             공급
                         </ManualButton>
@@ -90,7 +194,7 @@ const ToggleGroup = styled.div`
     cursor: pointer;
 `
 
-const ToggleOption = styled.div<{ active: boolean }>`
+const ToggleOption = styled.div<{ $active: boolean }>`
     flex: 1;
     z-index: 2;
     display: flex;
@@ -98,12 +202,12 @@ const ToggleOption = styled.div<{ active: boolean }>`
     justify-content: center;
     font-size: 16px;
     font-weight: 600;
-    color: ${({ active }) => (active ? "white" : colors.Green500)};
+    color: ${({ $active }) => ($active ? "white" : colors.Green500)};
     user-select: none;
     transition: color 0.25s ease;
 `
 
-const ActiveBackground = styled.div<{ position: "auto" | "manual" }>`
+const ActiveBackground = styled.div<{ $position: "auto" | "manual" }>`
     position: absolute;
     top: 0;
     bottom: 0;
@@ -112,7 +216,7 @@ const ActiveBackground = styled.div<{ position: "auto" | "manual" }>`
     border-radius: 12px;
     transition: left 0.25s ease;
 
-    left: ${({ position }) => (position === "manual" ? "50%" : "0%")};
+    left: ${({ $position }) => ($position === "manual" ? "50%" : "0%")};
 `
 
 const ManualWrapper = styled.div`
@@ -137,7 +241,7 @@ const ManualToggle = styled.div`
     margin: auto;
 `
 
-const ManualButton = styled.div<{ active: boolean }>`
+const ManualButton = styled.div<{ $active: boolean }>`
     flex: 1;
     z-index: 2;
     display: flex;
@@ -145,7 +249,7 @@ const ManualButton = styled.div<{ active: boolean }>`
     align-items: center;
     font-size: 16px;
     font-weight: 600;
-    color: ${({ active }) => (active ? "white" : colors.Green500)};
+    color: ${({ $active }) => ($active ? "white" : colors.Green500)};
     transition: color 0.25s ease;
     cursor: pointer;
 `
