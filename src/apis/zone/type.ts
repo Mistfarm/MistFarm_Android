@@ -32,6 +32,7 @@ export interface ZoneDevicesResponse {
 
 export interface CreateZoneRequest {
     zone_name: string
+    device_ids: string[]
 }
 
 export interface DeleteDevicesRequest {
