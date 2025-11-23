@@ -2,7 +2,12 @@ import styled from "styled-components"
 import { Dropdown, Button, Input, Text, Map } from "../components/common"
 import { AreaItem } from "../components/setting"
 import { useState } from "react"
-import { useCreateZone, useGetZoneDevices, useGetZoneList } from "../apis/zone"
+import {
+    useCreateZone,
+    useGetZoneDevices,
+    useGetZoneList,
+    useRegisterDevice,
+} from "../apis/zone"
 import { toast } from "react-toastify"
 
 export function NotSet() {
@@ -23,6 +28,7 @@ export function NotSet() {
     const devices = devicesData?.devices ?? []
 
     const createZoneMutation = useCreateZone()
+    const registerDeviceMutation = useRegisterDevice()
 
     const handleCheckDevice = (id: string) => {
         setCheckedDevices((prev) =>
@@ -35,11 +41,30 @@ export function NotSet() {
         if (checkedDevices.length === 0)
             return toast.error("추가할 기기를 선택해주세요")
 
-        // TODO: 서버에 기존 구획에 기기 추가 API 호출
-        toast.success(
-            `기기 ${checkedDevices.length}개가 ${selectedOldZone} 구획에 추가되었습니다.`
+        const selectedZoneId = zones.find((v) => v.name === selectedOldZone)?.id
+        if (!selectedZoneId) return toast.error("올바른 구획을 선택해주세요")
+
+        registerDeviceMutation.mutate(
+            {
+                zone_id: selectedZoneId,
+                device_ids: checkedDevices,
+            },
+            {
+                onSuccess: () => {
+                    toast.success(
+                        `기기 ${checkedDevices.length}개가 ${selectedOldZone} 구획에 추가되었습니다.`
+                    )
+                    setCheckedDevices([])
+                },
+                onError: (err: any) => {
+                    const message =
+                        err?.response?.data?.message ||
+                        err?.message ||
+                        "기기 추가에 실패했습니다."
+                    toast.error(message)
+                },
+            }
         )
-        setCheckedDevices([])
     }
 
     const handleAddNew = () => {

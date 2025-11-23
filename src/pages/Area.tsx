@@ -62,7 +62,7 @@ export function Area() {
         if (!zoneId) return toast.error("유효하지 않은 구획입니다.")
 
         deleteZoneMutation.mutate(
-            { zone_ids: [zoneId] },
+            { zone_id: zoneId },
             {
                 onSuccess: () => toast.success("구획이 삭제되었습니다."),
                 onError: (err: any) =>

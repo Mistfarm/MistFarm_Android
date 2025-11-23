@@ -5,6 +5,7 @@ import {
     CreateZoneRequest,
     DeleteDevicesRequest,
     DeleteZoneRequest,
+    RegisterDeviceRequest,
     RegisterZoneRequest,
     ZoneDevicesRequest,
     ZoneDevicesResponse,
@@ -76,6 +77,14 @@ export const useDeleteDevice = () => {
     return useMutation<void, AxiosError, DeleteDevicesRequest>({
         mutationFn: async (data) => {
             await instance.post("/zone", data)
+        },
+    })
+}
+
+export const useRegisterDevice = () => {
+    return useMutation<void, AxiosError, RegisterDeviceRequest>({
+        mutationFn: async (data) => {
+            await instance.post("/zone/devices", data)
         },
     })
 }
