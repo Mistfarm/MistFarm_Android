@@ -14,7 +14,7 @@ export interface ZonesResponse {
 }
 
 export interface DeleteZoneRequest {
-    zone_ids: string[]
+    zone_id: string
 }
 
 export interface ZoneDevicesRequest {
@@ -36,6 +36,11 @@ export interface CreateZoneRequest {
 }
 
 export interface DeleteDevicesRequest {
+    zone_id: string
+    device_ids: string[]
+}
+
+export interface RegisterDeviceRequest {
     zone_id: string
     device_ids: string[]
 }
