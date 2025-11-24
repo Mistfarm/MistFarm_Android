@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 interface IProps {
     plant?: string
     name?: string
-    state?: "success" | "fail"
+    state?: boolean
     type?: "select" | "areaDelete" | "deviceDelete"
     checkbox?: boolean
     button?: boolean
@@ -65,14 +65,10 @@ export function AreaItem({
                     </Text>
                     {state && (
                         <Text
-                            color={
-                                state === "success"
-                                    ? "Green500"
-                                    : "CriticalMain"
-                            }
+                            color={state ? "Green500" : "CriticalMain"}
                             font={isMobile ? "BodyMedium" : "BodySmall"}
                         >
-                            {state === "success" ? "연결 성공" : "연결 실패"}
+                            {state ? "연결 성공" : "연결 실패"}
                         </Text>
                     )}
                 </TextWrapper>
