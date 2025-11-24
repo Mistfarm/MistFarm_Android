@@ -44,3 +44,14 @@ export interface RegisterDeviceRequest {
     zone_id: string
     device_ids: string[]
 }
+
+export interface DeviceItem {
+    device_id: string
+    connected: boolean
+    lat: number
+    lon: number
+}
+
+export interface Device {
+    devices: DeviceItem[]
+}
