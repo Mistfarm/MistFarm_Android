@@ -9,17 +9,20 @@ import {
     useRegisterDevice,
 } from "../apis/zone"
 import { toast } from "react-toastify"
+import { useDevicesStatus } from "../hooks/useDevicesStatus"
 
 export function NotSet() {
     const [selectedOldZone, setSelectedOldZone] = useState<string>("")
     const [newZoneName, setNewZoneName] = useState("")
     const [checkedDevices, setCheckedDevices] = useState<string[]>([])
 
-    const positions = [
-        { lat: 36.3916, lng: 127.3632 },
-        { lat: 36.3926, lng: 127.3635 },
-        { lat: 36.39146, lng: 127.3642 },
-    ]
+    const { devices: socketDevices } = useDevicesStatus("")
+    const mapCoordinates = socketDevices.map((d) => ({
+        device_id: d.device_id,
+        lat: d.lat,
+        lng: d.lon,
+        connected: d.connected,
+    }))
 
     const { data: zonesData } = useGetZoneList()
     const zones = zonesData?.zones ?? []
@@ -94,11 +97,10 @@ export function NotSet() {
     return (
         <Container title="구획 관리">
             <MapWrapper>
-                <Map coordinates={positions} />
+                <Map devices={mapCoordinates} />
             </MapWrapper>
 
             <Wrapper>
-                {/* 기존 구획에 추가 */}
                 <ContentContainer>
                     <Dropdown
                         label="기존 구획에 추가"
@@ -126,17 +128,26 @@ export function NotSet() {
                             생성하기
                         </Button>
                     </ButtonWrapper>
+
                     <Text font="TitleTiny">미설정 기기</Text>
-                    {devices.map((v) => (
-                        <AreaItem
-                            key={v.devices_id}
-                            checkbox
-                            name={v.name}
-                            value={checkedDevices.includes(v.devices_id)}
-                            onCheck={() => handleCheckDevice(v.devices_id)}
-                            type="deviceDelete"
-                        />
-                    ))}
+
+                    {devices.map((v) => {
+                        const socketInfo = socketDevices.find(
+                            (d) => d.device_id === v.devices_id
+                        )
+
+                        return (
+                            <AreaItem
+                                key={v.devices_id}
+                                checkbox
+                                name={v.name}
+                                value={checkedDevices.includes(v.devices_id)}
+                                onCheck={() => handleCheckDevice(v.devices_id)}
+                                type="deviceDelete"
+                                state={socketInfo?.connected}
+                            />
+                        )
+                    })}
                 </ContentContainer>
             </Wrapper>
         </Container>

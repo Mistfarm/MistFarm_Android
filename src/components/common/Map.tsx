@@ -6,13 +6,20 @@ declare global {
     }
 }
 
+interface Device {
+    device_id: string
+    lat: number
+    lng: number
+    connected: boolean
+}
+
 interface IProps {
-    coordinates: { lat: number; lng: number }[]
+    devices: Device[]
     level?: number
     height?: string
 }
 
-export function Map({ coordinates, level = 3, height = "500px" }: IProps) {
+export function Map({ devices, level = 3, height = "500px" }: IProps) {
     const mapRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -42,33 +49,66 @@ export function Map({ coordinates, level = 3, height = "500px" }: IProps) {
         document.head.appendChild(script)
 
         function initMap() {
-            if (!mapRef.current || coordinates.length === 0) return
+            if (!mapRef.current) return
             const kakao = window.kakao
 
-            const center = new kakao.maps.LatLng(
-                coordinates[0].lat,
-                coordinates[0].lng
-            )
+            // ⭐ coordinates가 없을 때 기본 중심
+            const defaultCenter = new kakao.maps.LatLng(36.3916, 127.3632)
+
+            const center =
+                devices.length > 0
+                    ? new kakao.maps.LatLng(devices[0].lat, devices[0].lng)
+                    : defaultCenter
 
             const map = new kakao.maps.Map(mapRef.current, {
                 center,
                 level,
             })
 
-            coordinates.forEach(({ lat, lng }) => {
-                new kakao.maps.Marker({
-                    map,
-                    position: new kakao.maps.LatLng(lat, lng),
-                })
-            })
+            if (devices.length === 0) return // ⭐ 아무 기기도 없으면 마커 없이 지도만 띄움
 
             const bounds = new kakao.maps.LatLngBounds()
-            coordinates.forEach(({ lat, lng }) => {
-                bounds.extend(new kakao.maps.LatLng(lat, lng))
+
+            devices.forEach((device) => {
+                const { lat, lng, connected, device_id } = device
+
+                const position = new kakao.maps.LatLng(lat, lng)
+
+                const markerImageSrc = connected
+                    ? "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png"
+                    : "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"
+
+                const markerImage = new kakao.maps.MarkerImage(
+                    markerImageSrc,
+                    new kakao.maps.Size(32, 32)
+                )
+
+                const marker = new kakao.maps.Marker({
+                    map,
+                    position,
+                    image: markerImage,
+                })
+
+                const infoWindow = new kakao.maps.InfoWindow({
+                    removable: true,
+                    content: `
+              <div style="padding:10px;font-size:14px;">
+                <b>ID:</b> ${device_id}<br/>
+                <b>Status:</b> ${connected ? "🟢 Online" : "🔴 Offline"}<br/>
+              </div>
+            `,
+                })
+
+                kakao.maps.event.addListener(marker, "click", () => {
+                    infoWindow.open(map, marker)
+                })
+
+                bounds.extend(position)
             })
+
             map.setBounds(bounds)
         }
-    }, [coordinates, level])
+    }, [devices, level])
 
     return (
         <div

@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom"
 import { useGetZoneSetting, useSelectPlant } from "../apis/plant"
 import { useDeleteZone, useGetZoneDevices, useDeleteDevice } from "../apis/zone"
 import { toast } from "react-toastify"
+import { useDevicesStatus } from "../hooks/useDevicesStatus"
 
 export function Area() {
     const { id } = useParams<{ id: string }>()
@@ -20,11 +21,13 @@ export function Area() {
 
     const options = ["고사리", "딸기"]
 
-    const positions = [
-        { lat: 36.3916, lng: 127.3632 },
-        { lat: 36.3926, lng: 127.3635 },
-        { lat: 36.39146, lng: 127.3642 },
-    ]
+    const { devices: socketDevices } = useDevicesStatus(id ?? "")
+    const mapCoordinates = socketDevices.map((d) => ({
+        device_id: d.device_id,
+        lat: d.lat,
+        lng: d.lon,
+        connected: d.connected,
+    }))
 
     const { data: setting } = useGetZoneSetting(zoneId)
     const selectPlantMutation = useSelectPlant()
@@ -126,7 +129,7 @@ export function Area() {
 
                 {viewMode === "plant" && (
                     <>
-                        <Map coordinates={positions} />
+                        <Map devices={mapCoordinates} />
                         <InputWrapper>
                             <Dropdown
                                 value={plant}
@@ -201,22 +204,28 @@ export function Area() {
                             </ButtonWrapper>
                         </SubTitle>
 
-                        {devices.map((device) => (
-                            <DeviceItemWrapper key={device.devices_id}>
-                                <AreaItem
-                                    checkbox
-                                    button={false}
-                                    type="deviceDelete"
-                                    name={device.name}
-                                    value={checkedDevices.includes(
-                                        device.devices_id
-                                    )}
-                                    onCheck={() =>
-                                        handleCheckDevice(device.devices_id)
-                                    }
-                                />
-                            </DeviceItemWrapper>
-                        ))}
+                        {devices.map((device) => {
+                            const socketInfo = socketDevices.find(
+                                (d) => d.device_id === device.devices_id
+                            )
+                            return (
+                                <DeviceItemWrapper key={device.devices_id}>
+                                    <AreaItem
+                                        checkbox
+                                        button={false}
+                                        type="deviceDelete"
+                                        name={device.name}
+                                        value={checkedDevices.includes(
+                                            device.devices_id
+                                        )}
+                                        onCheck={() =>
+                                            handleCheckDevice(device.devices_id)
+                                        }
+                                        state={socketInfo?.connected}
+                                    />
+                                </DeviceItemWrapper>
+                            )
+                        })}
                     </DeviceListContainer>
                 )}
             </Wrapper>
