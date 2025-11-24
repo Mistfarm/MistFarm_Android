@@ -9,14 +9,17 @@ import {
     useRegisterDevice,
 } from "../apis/zone"
 import { toast } from "react-toastify"
-import { useDevicesStatus } from "../hooks/useDevicesStatus"
+import { useDeviceStatus } from "../apis/zone/useDeviceStatus"
 
 export function NotSet() {
     const [selectedOldZone, setSelectedOldZone] = useState<string>("")
     const [newZoneName, setNewZoneName] = useState("")
     const [checkedDevices, setCheckedDevices] = useState<string[]>([])
 
-    const { devices: socketDevices } = useDevicesStatus("")
+    const { data: zoneList } = useGetZoneList()
+    const notSetId = zoneList?.zones[0].id ?? ""
+
+    const { devices: socketDevices } = useDeviceStatus(notSetId)
     const mapCoordinates = socketDevices.map((d) => ({
         device_id: d.device_id,
         lat: d.lat,

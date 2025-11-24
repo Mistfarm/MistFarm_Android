@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom"
 import { useGetZoneSetting, useSelectPlant } from "../apis/plant"
 import { useDeleteZone, useGetZoneDevices, useDeleteDevice } from "../apis/zone"
 import { toast } from "react-toastify"
-import { useDevicesStatus } from "../hooks/useDevicesStatus"
+import { useDeviceStatus } from "../apis/zone/useDeviceStatus"
 
 export function Area() {
     const { id } = useParams<{ id: string }>()
@@ -19,9 +19,9 @@ export function Area() {
     const [viewMode, setViewMode] = useState<"plant" | "device">("plant")
     const [checkedDevices, setCheckedDevices] = useState<string[]>([])
 
-    const options = ["고사리", "딸기"]
+    const options = ["허브", "고사리", "딸기"]
 
-    const { devices: socketDevices } = useDevicesStatus(id ?? "")
+    const { devices: socketDevices } = useDeviceStatus(zoneId)
     const mapCoordinates = socketDevices.map((d) => ({
         device_id: d.device_id,
         lat: d.lat,
