@@ -22,7 +22,7 @@ export function NutrientRatioSet({ zoneId }: Props) {
 
     useEffect(() => {
         if (!data) return
-        if ("nutrients_rate" in data) setRatio(data.nutrients_rate)
+        if ("nutrients_rate" in data) setRatio(data.nutrientsRate)
     }, [data])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +31,7 @@ export function NutrientRatioSet({ zoneId }: Props) {
 
     const handleSave = () => {
         setNutrientMutation.mutate(
-            { zone_id: zoneId, nutrients_rate: ratio },
+            { zoneId: zoneId, nutrientsRate: ratio },
             {
                 onSuccess: () => refetch(),
                 onError: (error) => {

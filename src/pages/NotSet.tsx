@@ -21,7 +21,7 @@ export function NotSet() {
 
     const { devices: socketDevices } = useDeviceStatus(notSetId)
     const mapCoordinates = socketDevices.map((d) => ({
-        device_id: d.device_id,
+        device_id: d.deviceId,
         lat: d.lat,
         lng: d.lon,
         connected: d.connected,
@@ -30,7 +30,7 @@ export function NotSet() {
     const { data: zonesData } = useGetZoneList()
     const zones = zonesData?.zones ?? []
 
-    const { data: devicesData } = useGetZoneDevices({ zone_id: "" })
+    const { data: devicesData } = useGetZoneDevices({ zoneId: "" })
     const devices = devicesData?.devices ?? []
 
     const createZoneMutation = useCreateZone()
@@ -52,8 +52,8 @@ export function NotSet() {
 
         registerDeviceMutation.mutate(
             {
-                zone_id: selectedZoneId,
-                device_ids: checkedDevices,
+                zoneId: selectedZoneId,
+                deviceIds: checkedDevices,
             },
             {
                 onSuccess: () => {
@@ -79,7 +79,7 @@ export function NotSet() {
             return toast.error("추가할 기기를 선택해주세요")
 
         createZoneMutation.mutate(
-            { zone_name: newZoneName, device_ids: checkedDevices },
+            { zoneName: newZoneName, deviceIds: checkedDevices },
             {
                 onSuccess: () => {
                     toast.success("구획이 생성되었습니다.")
@@ -136,16 +136,16 @@ export function NotSet() {
 
                     {devices.map((v) => {
                         const socketInfo = socketDevices.find(
-                            (d) => d.device_id === v.devices_id
+                            (d) => d.deviceId === v.devicesId
                         )
 
                         return (
                             <AreaItem
-                                key={v.devices_id}
+                                key={v.devicesId}
                                 checkbox
                                 name={v.name}
-                                value={checkedDevices.includes(v.devices_id)}
-                                onCheck={() => handleCheckDevice(v.devices_id)}
+                                value={checkedDevices.includes(v.devicesId)}
+                                onCheck={() => handleCheckDevice(v.devicesId)}
                                 type="deviceDelete"
                                 state={socketInfo?.connected}
                             />

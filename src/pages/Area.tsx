@@ -23,7 +23,7 @@ export function Area() {
 
     const { devices: socketDevices } = useDeviceStatus(zoneId)
     const mapCoordinates = socketDevices.map((d) => ({
-        device_id: d.device_id,
+        device_id: d.deviceId,
         lat: d.lat,
         lng: d.lon,
         connected: d.connected,
@@ -41,7 +41,7 @@ export function Area() {
         if (!plant) return
         const timer = setTimeout(() => {
             selectPlantMutation.mutate(
-                { zone_id: zoneId, plant },
+                { zoneId: zoneId, plant },
                 {
                     onSuccess: () =>
                         toast.success(`${plant}으로 변경되었습니다.`),
@@ -65,7 +65,7 @@ export function Area() {
         if (!zoneId) return toast.error("유효하지 않은 구획입니다.")
 
         deleteZoneMutation.mutate(
-            { zone_id: zoneId },
+            { zoneId: zoneId },
             {
                 onSuccess: () => toast.success("구획이 삭제되었습니다."),
                 onError: (err: any) =>
@@ -77,7 +77,7 @@ export function Area() {
     }
 
     const { data: devicesData, refetch: refetchDevices } = useGetZoneDevices(
-        { zone_id: zoneId },
+        { zoneId: zoneId },
         { enabled: !!zoneId }
     )
     const devices = devicesData?.devices ?? []
@@ -92,7 +92,7 @@ export function Area() {
     const handleDeleteSelectedDevices = () => {
         if (!zoneId || checkedDevices.length === 0) return
         deleteDeviceMutation.mutate(
-            { zone_id: zoneId, device_ids: checkedDevices },
+            { zoneId: zoneId, deviceIds: checkedDevices },
             {
                 onSuccess: () => {
                     toast.success("선택된 기기가 삭제되었습니다.")
@@ -145,7 +145,7 @@ export function Area() {
                                 <Info
                                     type="plant"
                                     percentage={
-                                        ((setting?.growth_level ?? 0) / 6) * 100
+                                        ((setting?.growthLevel ?? 0) / 6) * 100
                                     }
                                     size={200}
                                 />
@@ -206,20 +206,20 @@ export function Area() {
 
                         {devices.map((device) => {
                             const socketInfo = socketDevices.find(
-                                (d) => d.device_id === device.devices_id
+                                (d) => d.deviceId === device.devicesId
                             )
                             return (
-                                <DeviceItemWrapper key={device.devices_id}>
+                                <DeviceItemWrapper key={device.devicesId}>
                                     <AreaItem
                                         checkbox
                                         button={false}
                                         type="deviceDelete"
                                         name={device.name}
                                         value={checkedDevices.includes(
-                                            device.devices_id
+                                            device.devicesId
                                         )}
                                         onCheck={() =>
-                                            handleCheckDevice(device.devices_id)
+                                            handleCheckDevice(device.devicesId)
                                         }
                                         state={socketInfo?.connected}
                                     />

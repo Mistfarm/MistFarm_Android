@@ -40,7 +40,7 @@ export function AutoSupplySet({ zoneId }: Props) {
         setMode(next)
         setModeMutation.mutate(
             {
-                zone_id: zoneId,
+                zoneId: zoneId,
                 mode: next === "auto",
             },
             {
@@ -62,7 +62,7 @@ export function AutoSupplySet({ zoneId }: Props) {
         setManualState(next)
         setPowerMutation.mutate(
             {
-                zone_id: zoneId,
+                zoneId: zoneId,
                 power: next === "on",
             },
             {
@@ -83,9 +83,9 @@ export function AutoSupplySet({ zoneId }: Props) {
     const handleIntervalChange = (on: string, off: string) => {
         setFogCycleMutation.mutate(
             {
-                zone_id: zoneId,
-                on_interval: on,
-                off_interval: off,
+                zoneId: zoneId,
+                onInterval: on,
+                offInterval: off,
             },
             {
                 onSuccess: () => refetch(),
@@ -129,10 +129,10 @@ export function AutoSupplySet({ zoneId }: Props) {
             {mode === "auto" && (
                 <SupplyIntervalSet
                     defaultOn={
-                        data?.mode === true ? data.on_interval : "00:00:00"
+                        data?.mode === true ? data.onInterval : "00:00:00"
                     }
                     defaultOff={
-                        data?.mode === true ? data.off_interval : "00:00:00"
+                        data?.mode === true ? data.offInterval : "00:00:00"
                     }
                     onSubmit={handleIntervalChange}
                 />

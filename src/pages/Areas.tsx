@@ -15,11 +15,11 @@ export function Areas() {
     const navigate = useNavigate()
 
     const { form, handleChange, reset } = useForm<{
-        zone_auth_id: string
-        zone_pw: string
+        zoneAuthId: string
+        zonePw: string
     }>({
-        zone_auth_id: "",
-        zone_pw: "",
+        zoneAuthId: "",
+        zonePw: "",
     })
 
     const [selectedZoneId] = useState<string>("")
@@ -27,7 +27,7 @@ export function Areas() {
     const { data: zoneList } = useGetZoneList()
     const { mutate: registerZone } = useRegisterZone()
     const { data: devices, refetch: refetchDevices } = useGetZoneDevices(
-        { zone_id: selectedZoneId },
+        { zoneId: selectedZoneId },
         { enabled: false }
     )
 
@@ -52,14 +52,14 @@ export function Areas() {
                     <Input
                         label="구획 아이디"
                         placeholder="구획 아이디를 입력하세요"
-                        value={form.zone_auth_id}
+                        value={form.zoneAuthId}
                         name="zone_auth_id"
                         onChange={handleChange}
                     />
                     <Input
                         label="구획 비밀번호"
                         placeholder="구획 비밀번호를 입력하세요"
-                        value={form.zone_pw}
+                        value={form.zonePw}
                         name="zone_pw"
                         onChange={handleChange}
                     />
@@ -91,7 +91,7 @@ export function Areas() {
                     {selectedZoneId &&
                         devices?.devices?.map((d) => (
                             <AreaItem
-                                key={d.devices_id}
+                                key={d.devicesId}
                                 name={d.name}
                                 type="deviceDelete"
                             />
