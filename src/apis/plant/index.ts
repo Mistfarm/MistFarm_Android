@@ -17,7 +17,7 @@ export const useGetZoneSetting = (zoneId: string, options = {}) => {
             const res = await instance.get<ZoneSettingResponse>(
                 "/zone/setting",
                 {
-                    params: { zone_id: zoneId },
+                    params: { zoneId: zoneId },
                 }
             )
             return res.data

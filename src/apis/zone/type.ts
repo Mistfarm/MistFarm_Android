@@ -1,6 +1,6 @@
 export interface RegisterZoneRequest {
-    zone_auth_id: string
-    zone_pw: string
+    zoneAuthId: string
+    zonePw: string
 }
 
 export interface ZoneItem {
@@ -14,15 +14,15 @@ export interface ZonesResponse {
 }
 
 export interface DeleteZoneRequest {
-    zone_id: string
+    zoneId: string
 }
 
 export interface ZoneDevicesRequest {
-    zone_id: string
+    zoneId: string
 }
 
 export interface DeviceItem {
-    devices_id: string
+    devicesId: string
     name: string
 }
 
@@ -31,22 +31,22 @@ export interface ZoneDevicesResponse {
 }
 
 export interface CreateZoneRequest {
-    zone_name: string
-    device_ids: string[]
+    zoneName: string
+    deviceIds: string[]
 }
 
 export interface DeleteDevicesRequest {
-    zone_id: string
-    device_ids: string[]
+    zoneId: string
+    deviceIds: string[]
 }
 
 export interface RegisterDeviceRequest {
-    zone_id: string
-    device_ids: string[]
+    zoneId: string
+    deviceIds: string[]
 }
 
 export interface DeviceItem {
-    device_id: string
+    deviceId: string
     connected: boolean
     lat: number
     lon: number

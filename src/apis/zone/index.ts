@@ -45,22 +45,22 @@ export const useDeleteZone = () => {
 }
 
 export const useGetZoneDevices = (
-    { zone_id }: ZoneDevicesRequest,
+    { zoneId }: ZoneDevicesRequest,
     options = {}
 ) => {
     return useQuery<ZoneDevicesResponse, AxiosError>({
-        queryKey: ["zone-devices", zone_id],
+        queryKey: ["zone-devices", zoneId],
         queryFn: async () => {
             const res = await instance.get<ZoneDevicesResponse>(
                 `/zone/devices`,
-                { params: { zone_id } }
+                { params: { zoneId } }
             )
             return res.data
         },
         staleTime: 0,
         gcTime: 0,
         retry: 0,
-        enabled: !!zone_id,
+        enabled: !!zoneId,
         ...options,
     })
 }
