@@ -53,7 +53,7 @@ export function NotSet() {
         registerDeviceMutation.mutate(
             {
                 zoneId: selectedZoneId,
-                deviceIds: checkedDevices,
+                deviceNames: checkedDevices,
             },
             {
                 onSuccess: () => {
