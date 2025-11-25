@@ -42,7 +42,7 @@ export interface DeleteDevicesRequest {
 
 export interface RegisterDeviceRequest {
     zoneId: string
-    deviceIds: string[]
+    deviceNames: string[]
 }
 
 export interface DeviceItem {
