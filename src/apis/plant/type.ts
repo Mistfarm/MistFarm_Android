@@ -1,48 +1,48 @@
 export interface AutoModeResponse {
-    growth_level: number
+    growthLevel: number
     humidity: number
     temperature: number
     plant: string
     mode: true
-    on_interval: string
-    off_interval: string
-    nutrients_rate: number
+    onInterval: string
+    offInterval: string
+    nutrientsRate: number
 }
 
 export interface ManualModeResponse {
-    growth_level: number
+    growthLevel: number
     humidity: number
     temperature: number
     plant: string
     mode: false
     power: boolean
-    nutrients_rate: number
+    nutrientsRate: number
 }
 
 export type ZoneSettingResponse = AutoModeResponse | ManualModeResponse
 
 export interface SelectPlantRequest {
-    zone_id: string
+    zoneId: string
     plant: string
 }
 
 export interface NutrientSettingRequest {
-    zone_id: string
-    nutrients_rate: number
+    zoneId: string
+    nutrientsRate: number
 }
 
 export interface SetFogCycleRequest {
-    zone_id: string
-    on_interval: string
-    off_interval: string
+    zoneId: string
+    onInterval: string
+    offInterval: string
 }
 
 export interface SetModeRequest {
-    zone_id: string
+    zoneId: string
     mode: boolean
 }
 
 export interface SetPowerRequest {
-    zone_id: string
+    zoneId: string
     power: boolean
 }
