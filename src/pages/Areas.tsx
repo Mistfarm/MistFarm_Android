@@ -53,14 +53,14 @@ export function Areas() {
                         label="구획 아이디"
                         placeholder="구획 아이디를 입력하세요"
                         value={form.zoneAuthId}
-                        name="zone_auth_id"
+                        name="zoneAuthId"
                         onChange={handleChange}
                     />
                     <Input
                         label="구획 비밀번호"
                         placeholder="구획 비밀번호를 입력하세요"
                         value={form.zonePw}
-                        name="zone_pw"
+                        name="zonePw"
                         onChange={handleChange}
                     />
                     <ButtonWrapper>
