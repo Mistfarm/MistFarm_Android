@@ -144,9 +144,12 @@ export function Area() {
                             <InfoWrapper>
                                 <Info
                                     type="plant"
-                                    percentage={
-                                        ((setting?.growthLevel ?? 0) / 6) * 100
-                                    }
+                                    percentage={Number(
+                                        (
+                                            ((setting?.growthLevel ?? 0) / 6) *
+                                            100
+                                        ).toFixed(1)
+                                    )}
                                     size={200}
                                 />
                                 <EnvironmentWrapper>
