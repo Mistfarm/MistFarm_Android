@@ -5,9 +5,8 @@ export const socket = io(
     {
         transports: ["websocket"],
         autoConnect: false,
-        reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
+        auth: {
+            token: "",
+        },
     }
 )

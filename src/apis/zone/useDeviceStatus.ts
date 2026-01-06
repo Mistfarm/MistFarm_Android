@@ -11,33 +11,36 @@ export function useDeviceStatus(zone_id: string) {
     useEffect(() => {
         if (!zone_id || !token) return
 
-        socket.io.opts.extraHeaders = {
-            Authorization: `Bearer ${token}`,
+        socket.auth = { token }
+
+        const onConnect = () => {
+            socket.emit("get-devices-status", { zoneId: zone_id })
         }
 
-        socket.on("connect", () => {
-            console.log("[socket] connected:", socket.id)
-
-            socket.emit("get-devices-status", { zoneId: zone_id })
-        })
-
-        socket.on("connect_error", (err) => {
-            console.log("[socket] connection error:", err.message)
-        })
-
-        socket.on("devices-status-update", (data: Device) => {
+        const onUpdate = (data: Device) => {
             queryClient.setQueryData(["devices-status", zone_id], data.devices)
-        })
+        }
 
-        socket.connect()
+        const onConnectError = (err: Error) => {
+            console.error("[socket] connect error:", err.message)
+        }
+
+        socket.on("connect", onConnect)
+        socket.on("devices-status-update", onUpdate)
+        socket.on("connect_error", onConnectError)
+
+        if (!socket.connected) {
+            socket.connect()
+        } else {
+            onConnect()
+        }
 
         return () => {
-            socket.off("connect")
-            socket.off("connect_error")
-            socket.off("devices-status-update")
-            socket.disconnect()
+            socket.off("connect", onConnect)
+            socket.off("devices-status-update", onUpdate)
+            socket.off("connect_error", onConnectError)
         }
-    }, [zone_id, token, queryClient])
+    }, [zone_id, token])
 
     return {
         devices:
