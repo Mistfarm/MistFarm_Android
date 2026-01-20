@@ -14,7 +14,7 @@ export function useDeviceStatus(zone_id: string) {
         socket.auth = { token }
 
         const onConnect = () => {
-            socket.emit("get-devices-status", { zoneId: zone_id })
+            socket.emit("get-devices-status", { zoneId: zone_id, token })
         }
 
         const onUpdate = (data: Device) => {
