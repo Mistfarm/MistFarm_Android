@@ -46,14 +46,14 @@ export const useDeleteZone = () => {
 
 export const useGetZoneDevices = (
     { zoneId }: ZoneDevicesRequest,
-    options = {}
+    options = {},
 ) => {
     return useQuery<ZoneDevicesResponse, AxiosError>({
         queryKey: ["zone-devices", zoneId],
         queryFn: async () => {
             const res = await instance.get<ZoneDevicesResponse>(
                 `/zone/devices`,
-                { params: { zoneId } }
+                { params: { zoneId } },
             )
             return res.data
         },
@@ -74,9 +74,10 @@ export const useCreateZone = () => {
 }
 
 export const useDeleteDevice = () => {
-    return useMutation<void, AxiosError, DeleteDevicesRequest>({
+    return useMutation<number, AxiosError, DeleteDevicesRequest>({
         mutationFn: async (data) => {
-            await instance.post("/zone", data)
+            const res = await instance.delete("/zone/setting", { data })
+            return res.status
         },
     })
 }

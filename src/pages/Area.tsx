@@ -19,7 +19,7 @@ export function Area() {
     const [viewMode, setViewMode] = useState<"plant" | "device">("plant")
     const [checkedDevices, setCheckedDevices] = useState<string[]>([])
 
-    const options = ["허브", "고사리", "딸기"]
+    const options = ["hub", "gosary", "none"]
 
     const { devices: socketDevices } = useDeviceStatus(zoneId)
     const mapCoordinates = socketDevices.map((d) => ({
@@ -53,7 +53,7 @@ export function Area() {
                             "식물 변경에 실패했습니다."
                         toast.error(message)
                     },
-                }
+                },
             )
         }, 400)
 
@@ -70,21 +70,21 @@ export function Area() {
                 onSuccess: () => toast.success("구획이 삭제되었습니다."),
                 onError: (err: any) =>
                     toast.error(
-                        err?.response?.data?.message || "구획 삭제 실패"
+                        err?.response?.data?.message || "구획 삭제 실패",
                     ),
-            }
+            },
         )
     }
 
     const { data: devicesData, refetch: refetchDevices } = useGetZoneDevices(
         { zoneId: zoneId },
-        { enabled: !!zoneId }
+        { enabled: !!zoneId },
     )
     const devices = devicesData?.devices ?? []
 
     const handleCheckDevice = (id: string) => {
         setCheckedDevices((prev) =>
-            prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
+            prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id],
         )
     }
 
@@ -101,10 +101,10 @@ export function Area() {
                 },
                 onError: (err: any) => {
                     toast.error(
-                        err?.response?.data?.message || "기기 삭제 실패"
+                        err?.response?.data?.message || "기기 삭제 실패",
                     )
                 },
-            }
+            },
         )
     }
 
@@ -148,7 +148,7 @@ export function Area() {
                                         (
                                             ((setting?.growthLevel ?? 0) / 6) *
                                             100
-                                        ).toFixed(1)
+                                        ).toFixed(1),
                                     )}
                                     size={200}
                                 />
@@ -209,7 +209,7 @@ export function Area() {
 
                         {devices.map((device) => {
                             const socketInfo = socketDevices.find(
-                                (d) => d.deviceId === device.devicesId
+                                (d) => d.deviceId === device.devicesId,
                             )
                             return (
                                 <DeviceItemWrapper key={device.devicesId}>
@@ -219,7 +219,7 @@ export function Area() {
                                         type="deviceDelete"
                                         name={device.name}
                                         value={checkedDevices.includes(
-                                            device.devicesId
+                                            device.devicesId,
                                         )}
                                         onCheck={() =>
                                             handleCheckDevice(device.devicesId)
