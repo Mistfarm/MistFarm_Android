@@ -53,7 +53,7 @@ export const useGetZoneDevices = (
         queryFn: async () => {
             const res = await instance.get<ZoneDevicesResponse>(
                 `/zone/devices`,
-                { params: { zoneId } },
+                { params: { "zone-id": zoneId } },
             )
             return res.data
         },
