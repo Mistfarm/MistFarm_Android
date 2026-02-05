@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Dropdown, Button, Input, Text, Map } from "../components/common"
+import { Dropdown, Button, Input, Text } from "../components/common"
 import { AreaItem } from "../components/setting"
 import { useState } from "react"
 import {
@@ -38,7 +38,7 @@ export function NotSet() {
 
     const handleCheckDevice = (id: string) => {
         setCheckedDevices((prev) =>
-            prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+            prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id],
         )
     }
 
@@ -58,7 +58,7 @@ export function NotSet() {
             {
                 onSuccess: () => {
                     toast.success(
-                        `기기 ${checkedDevices.length}개가 ${selectedOldZone} 구획에 추가되었습니다.`
+                        `기기 ${checkedDevices.length}개가 ${selectedOldZone} 구획에 추가되었습니다.`,
                     )
                     setCheckedDevices([])
                 },
@@ -69,7 +69,7 @@ export function NotSet() {
                         "기기 추가에 실패했습니다."
                     toast.error(message)
                 },
-            }
+            },
         )
     }
 
@@ -93,15 +93,15 @@ export function NotSet() {
                         "구획 생성에 실패했습니다."
                     toast.error(message)
                 },
-            }
+            },
         )
     }
 
     return (
         <Container title="구획 관리">
-            <MapWrapper>
+            {/* <MapWrapper>
                 <Map devices={mapCoordinates} />
-            </MapWrapper>
+            </MapWrapper> */}
 
             <Wrapper>
                 <ContentContainer>
@@ -136,7 +136,7 @@ export function NotSet() {
 
                     {devices.map((v) => {
                         const socketInfo = socketDevices.find(
-                            (d) => d.deviceId === v.devicesId
+                            (d) => d.deviceId === v.devicesId,
                         )
 
                         return (
@@ -214,25 +214,25 @@ const ButtonWrapper = styled.div`
     }
 `
 
-const MapWrapper = styled.div`
-    width: 100%;
-    max-width: 1200px;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 60px;
+// const MapWrapper = styled.div`
+//     width: 100%;
+//     max-width: 1200px;
+//     padding: 0 16px;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     gap: 60px;
 
-    @media (max-width: 1024px) {
-        padding: 0 32px;
-        gap: 48px;
-    }
-    @media (max-width: 768px) {
-        padding: 0 20px;
-        gap: 36px;
-    }
-    @media (max-width: 480px) {
-        padding: 0 16px;
-        gap: 28px;
-    }
-`
+//     @media (max-width: 1024px) {
+//         padding: 0 32px;
+//         gap: 48px;
+//     }
+//     @media (max-width: 768px) {
+//         padding: 0 20px;
+//         gap: 36px;
+//     }
+//     @media (max-width: 480px) {
+//         padding: 0 16px;
+//         gap: 28px;
+//     }
+// `
