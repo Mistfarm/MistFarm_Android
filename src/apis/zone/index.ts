@@ -76,7 +76,7 @@ export const useCreateZone = () => {
 export const useDeleteDevice = () => {
     return useMutation<number, AxiosError, DeleteDevicesRequest>({
         mutationFn: async (data) => {
-            const res = await instance.delete("/zone/setting", { data })
+            const res = await instance.delete("/zone/devices", { data })
             return res.status
         },
     })
