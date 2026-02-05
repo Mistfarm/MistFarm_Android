@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Button, Dropdown, Map, Text } from "../components/common"
+import { Button, Dropdown, Text } from "../components/common"
 import { useState, useEffect } from "react"
 import { colors } from "../styles/colors"
 import { Info } from "../components/plant/Info"
@@ -129,7 +129,7 @@ export function Area() {
 
                 {viewMode === "plant" && (
                     <>
-                        <Map devices={mapCoordinates} />
+                        {/* <Map devices={mapCoordinates} /> */}
                         <InputWrapper>
                             <Dropdown
                                 value={plant}
