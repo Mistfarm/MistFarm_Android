@@ -22,7 +22,7 @@ export function NutrientRatioSet({ zoneId }: Props) {
 
     useEffect(() => {
         if (!data) return
-        if ("nutrients_rate" in data) setRatio(data.nutrientsRate)
+        setRatio(data.nutrientsRate)
     }, [data])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ export function NutrientRatioSet({ zoneId }: Props) {
 
                     toast.error(message)
                 },
-            }
+            },
         )
     }
 
