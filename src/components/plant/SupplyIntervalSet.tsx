@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { Button, Text } from "../common"
 import { colors } from "../../styles/colors"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import React from "react"
 
 interface Props {
@@ -22,7 +22,7 @@ export function SupplyIntervalSet({
         values: string[],
         setValues: (v: string[]) => void,
         idx: number,
-        val: string
+        val: string,
     ) => {
         const numeric = val.replace(/\D/g, "").slice(0, 2)
         const next = [...values]
@@ -35,6 +35,14 @@ export function SupplyIntervalSet({
         const offStr = offValues.map((v) => v.padStart(2, "0")).join(":")
         onSubmit(onStr, offStr)
     }
+
+    useEffect(() => {
+        setOnValues(defaultOn.split(":"))
+    }, [defaultOn])
+
+    useEffect(() => {
+        setOffValues(defaultOff.split(":"))
+    }, [defaultOff])
 
     return (
         <Wrapper>
@@ -53,7 +61,7 @@ export function SupplyIntervalSet({
                                         onValues,
                                         setOnValues,
                                         idx,
-                                        e.target.value
+                                        e.target.value,
                                     )
                                 }
                             />
@@ -78,7 +86,7 @@ export function SupplyIntervalSet({
                                         offValues,
                                         setOffValues,
                                         idx,
-                                        e.target.value
+                                        e.target.value,
                                     )
                                 }
                             />
